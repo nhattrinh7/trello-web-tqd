@@ -7,7 +7,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 function ModeToggle() {
   const { mode, setMode } = useColorScheme()
   return (
-    <Button sx={{color: 'white'}}
+    <Button sx={{color: 'gray'}}
       onClick={() => {
         setMode(mode === 'light' ? 'dark' : 'light');
       }}
