@@ -1,9 +1,14 @@
-import { createTheme} from '@mui/material/styles'
+import { createTheme } from '@mui/material/styles'
 
-const theme =  createTheme({
+const APP_BAR_HEIGHT = '58px'
+const BOARD_BAR_HEIGHT = '60px'
+const BOARD_CONTENT_HEIGHT = `calc(100vh - ${APP_BAR_HEIGHT} - ${BOARD_BAR_HEIGHT})`
+
+const theme = createTheme({
   trello: {
-    appBarHeight: '58px',
-    boardBarHeight: '60px',
+    appBarHeight: APP_BAR_HEIGHT,
+    boardBarHeight: BOARD_BAR_HEIGHT,
+    boardContentHeight: BOARD_CONTENT_HEIGHT
   },
   colorSchemes: {
     dark: true,
@@ -17,11 +22,11 @@ const theme =  createTheme({
             height: '8px'
           },
           '*::-webkit-scrollbar-thumb': {
-            backgroundColor: '#bdc3c7',
+            backgroundColor: '#dcdde1',
             borderRadius: '8px'
           },
           '*::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: '#0984e3',
+            backgroundColor: 'white',
           }
         }
       }
@@ -30,33 +35,50 @@ const theme =  createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
+          borderWidth: '1px',
+          '&:hover': {borderWidth: '2px'}
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+        root: () => ({
+          // color: theme.palette.primary.main,
           fontSize: '0.875rem',
-          '.MuiOutlinedInput-notchedOutline': {
-            borderColor: theme.palette.primary.light
-          },
-          '&:hover': {
-            '.MuiOutlinedInput-notchedOutline': {
-            borderColor: theme.palette.primary.main
-            },
-          },
+          // '.MuiOutlinedInput-notchedOutline': {
+          //   borderColor: theme.palette.primary.light
+          // },
+          // '&:hover': {
+          //   '.MuiOutlinedInput-notchedOutline': {
+          //   borderColor: theme.palette.primary.main
+          //   },
+          // },
           '& fieldset': {
             borderWidth: '1px !important' 
+          },
+          '&:hover fieldset': {
+            borderWidth: '2px !important' 
+          },
+          '&:Mui-focused fieldset': {
+            borderWidth: '2px !important' 
           }
         })
       },
     },
     MuiInputLabel: {
       styleOverrides: {
-        root: ({ theme }) => ({
-          color: theme.palette.primary.main,
+        root: () => ({
+          // color: theme.palette.primary.main,
           fontSize: '0.875rem',
+        })
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: () => ({
+          '&.Muitypography-body1': {
+            fontSize: '0.875rem',
+          }
         })
       },
     },

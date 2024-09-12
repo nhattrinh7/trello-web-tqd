@@ -7,14 +7,24 @@ import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 
-function ModeToggle() {
+function ModeSelect() {
   const { mode, setMode } = useColorScheme();
   if (!mode) {
     return null;
   }
   return (
     <Box>
-      <Select sx={{height: '38px'}} value={mode} onChange={(event) => setMode(event.target.value)}>
+      <Select sx={{
+          height: '38px',
+          color: 'white',
+          // '.MuiOutlinedInput-root':  {borderColor: 'white'},
+          // '&:hover .MuiOutlinedInput-root': {borderColor: 'white'},
+          '& fieldset': {borderColor: 'white'},
+          // '&:hover fieldset': {borderColor: 'white'},
+          // '.MuiSvgicon-root': {color: 'white'}
+        }} 
+        value={mode} 
+        onChange={(event) => setMode(event.target.value)}>
         <MenuItem value="system">
           <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
             <SettingsBrightnessIcon fontSize='small'/> System
@@ -36,4 +46,4 @@ function ModeToggle() {
 }
 
 
-export default ModeToggle
+export default ModeSelect

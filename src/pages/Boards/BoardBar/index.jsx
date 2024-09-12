@@ -11,12 +11,13 @@ import { Tooltip } from "@mui/material"
 import Button from '@mui/material/Button'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
 
+
 const MENU_STYLES = {
-  color: 'primary.main',
-  backgroundColor: 'white',
+  color: 'white',
+  backgroundColor: 'transparent',
   paddingX: '5px',
   '& .MuiSvgIcon-root': {
-    color: 'primary.main'
+    color: 'white'
   }
 }
 
@@ -31,7 +32,9 @@ function BoardBar() {
       gap: 2,
       paddingX: 2,
       overflowX: 'auto',
-      borderTop: '1px solid #0984e3'
+      borderBottom: '1px solid white',
+      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#34495e' : '#1976d2'),
+      '&::-webkit-scrollbar-track': {m: 2},
     }}>
       <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}> 
         <Chip
@@ -67,14 +70,29 @@ function BoardBar() {
       </Box>
 
       <Box sx={{display: 'flex', alignItems: 'center', gap: 2}}> 
-        <Button variant="outlined" startIcon={<PersonAddIcon />}>Invited</Button>
+        <Button 
+          variant="outlined" 
+          startIcon={<PersonAddIcon />} 
+          sx={{
+            color:'white',
+            borderColor: 'white'
+            // '& .MuiButton-root': {
+            //   '& fieldset': {borderColor: 'white'}
+            // }
+          }}
+          >
+            Invited
+        </Button>
         <AvatarGroup 
           max={4} 
           sx={{ 
             '& .MuiAvatar-root': {
               width: '34px',
               height: '34px',
-              // fontSize: '16px'
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              '&:first-of-type': {bgcolor: '#a4b0be'}
             }
           }}>
           <Tooltip title='avatar'>
