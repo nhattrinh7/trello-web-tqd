@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import Box from "@mui/material/Box"
-import ModeSelect from '~/components/ModeSelect'
+import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from "@mui/material/SvgIcon"
 import Typography from '@mui/material/Typography'
 import Workspaces from "./Menus/Workspaces"
 import Recent from "./Menus/Recent"
-import Starred from "./Menus//Starred"
+import Starred from "./Menus/Starred"
 import Templates from "./Menus/Templates"
 import Profiles from "./Menus/Profiles"
 import Button from '@mui/material/Button'
