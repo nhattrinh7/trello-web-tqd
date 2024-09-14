@@ -16,15 +16,16 @@ import { ContentCopy, ContentPaste } from "@mui/icons-material"
 import AddCardIcon from '@mui/icons-material/AddCard'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
+import { mapOrder } from "~/utils/sorts"
 
-const COLUMN_HEADER_HEIGHT = '50px'
-const COLUMN_FOOTER_HEIGHT = '56px'
 
-function Column() {
+function Column({ column }) {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl);
   const handleClick = (event) => {setAnchorEl(event.currentTarget)}
   const handleClose = () => {setAnchorEl(null)}
+
+  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
 
   return (
     <Box sx={{
@@ -39,7 +40,7 @@ function Column() {
 
       {/* Column header */}
       <Box sx={{
-        height: COLUMN_HEADER_HEIGHT,
+        height: (theme) => theme.trello.columnHeaderHeight,
         p: 2,
         display: 'flex',
         alignItems: 'center',
@@ -51,7 +52,7 @@ function Column() {
           cursor: 'pointer'
         }}
         >
-          Column title
+          { column?.title }
         </Typography>
 
         <Box>
@@ -107,11 +108,11 @@ function Column() {
       </Box>
 
       {/* Column List Card */}
-      <ListCards />
+      <ListCards cards={orderedCards}/>
 
       {/* Column footer */}
       <Box sx={{
-        height: COLUMN_FOOTER_HEIGHT,
+        height: (theme) => theme.trello.columnFooterHeight,
         p: 2,
         display: 'flex',
         alignItems: 'center',
