@@ -10,16 +10,17 @@ import { DndContext,
          DragOverlay,
          defaultDropAnimationSideEffects,
          closestCorners,
-         closestCenter,
+        //  closestCenter,
          pointerWithin,
-         rectIntersection,
+        //  rectIntersection,
          getFirstCollision
 } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
 import { useEffect, useState, useCallback, useRef } from "react"
 import Column from './ListColumns/Column/Column'
 import Card from './ListColumns/Column/ListCards/Card/Card'
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
+import { generatePlaceholderCard } from "~/utils/formatters"
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -82,6 +83,12 @@ function BoardContent({ board }) {
       if(nextActiveColumn) {
         // xóa cái card bị kéo đi mất ở activeColumn 
         nextActiveColumn.cards = nextActiveColumn.cards.filter(card => card._id !== activeDraggingCardId)
+
+        //Thêm Placeholder Card nếu Column rỗng: bị kéo hết Card đi không còn cái nào
+        if(isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)]
+        }
+
         // xóa card xong cập nhật mảng cardOrderIds 
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map(card => card._id)
       }
@@ -97,6 +104,10 @@ function BoardContent({ board }) {
         }
         // thêm card đang kéo vào overColumn theo vị trí index mới
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDraggingCardData)
+
+        //xóa PlacehoderCard video 37.2
+        nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
+
         // thêm xong thì cập nhật mảng cardOrderIds
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map(card => card._id)
       }
@@ -161,8 +172,8 @@ function BoardContent({ board }) {
       // activeDraggingCard là card đang được kéo, overCard là card đích
       const { id: activeDraggingCardId, data: { current: activeDraggingCardData } } = active
       const { id: overCardId } = over
-      console.log('active ', active)
-      console.log('over ', over)
+      // console.log('active ', active)
+      // console.log('over ', over)
 
       const activeColumn = findColumnByCardId(activeDraggingCardId)
       const overColumn = findColumnByCardId(overCardId)
@@ -265,14 +276,14 @@ function BoardContent({ board }) {
       // (trong TH này mượt hơn closestCenter), dùng card sẽ ko bị flickering
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if(checkColumn) {
-        console.log('overId before: ', overId) //là columnId
+        // console.log('overId before: ', overId) //là columnId
         overId = closestCorners({
           ...args,
           droppableContainers: args.droppableContainers.filter(container => {
             return container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id)
           })
         })[0]?.id
-        console.log('overId after: ', overId)//lúc này là cardId rồi
+        // console.log('overId after: ', overId)//lúc này là cardId rồi
       }
 
       lastOverId.current = overId //lastOverId là 1 ref của useRef
