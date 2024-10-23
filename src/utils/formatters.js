@@ -12,11 +12,11 @@ export const capitalizeFirstLetter = (val) => {
  * Quan trọng khi tạo: phải đầy đủ: (_id, boardId, columnId, FE_PlaceholderCard)
  *** Kỹ hơn nữa về cách tạo chuẩn ở bước nào thì sẽ học ở phần tích hợp API-backend vào dự án vì đây là file mock data
 */
-export const generatePlaceholderCard = column => {
+export const generatePlaceholderCard = (column) => {
   return {
     _id: `${column._id}-placeholder-card`, 
     boardId: column.boardId, 
     columnId: column._id,
-    FE_PlaceholderCard: 'true'
+    FE_PlaceholderCard: true
   }
 }

@@ -31,7 +31,7 @@ function BoardContent({ board }) {
   const mouseSensor = useSensor(MouseSensor, {activationConstraint: { distance: 10 } })
   const touchSensor = useSensor(TouchSensor, {activationConstraint: { delay: 250, tolerance: 10 } })
   const sensors = useSensors(mouseSensor, touchSensor)
- // sử dụng kết hợp sensors là mouse và touch để có trải nghiệm tốt nhất trên mobile
+  // sử dụng kết hợp sensors là mouse và touch để có trải nghiệm tốt nhất trên mobile
  
   const [orderedColumns, setOrderedColumns] = useState([])
 
@@ -116,12 +116,13 @@ function BoardContent({ board }) {
 
     })
   }
-
+  // phần tử được mình kéo: active, phần tử mà mình kéo đến: over
   const handleDragStart = (event) => {
-    // console.log('handleDragStart: ', event)
     setActiveDragItemId(event?.active?.id)
     setActiveDragItemType(event?.active?.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE.CARD : ACTIVE_DRAG_ITEM_TYPE.COLUMN)
     setActiveDragItemData(event?.active?.data?.current)
+
+    // console.log('handleDragStart: ', event)
 
     if(event?.active?.data?.current?.columnId) {
       setOldColumnWhenDraggingCard(findColumnByCardId(event?.active?.id))
@@ -133,7 +134,7 @@ function BoardContent({ board }) {
 
     if(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return
 
-    const { active, over } = event
+    const { active, over } = event 
 
     if(!active || !over) return
     
@@ -296,7 +297,7 @@ function BoardContent({ board }) {
   }, [activeDragItemType])
   
   return (
-    <DndContext 
+    <DndContext
       onDragStart={handleDragStart} 
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd} 
