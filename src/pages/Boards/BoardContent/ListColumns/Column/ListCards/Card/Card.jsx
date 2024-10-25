@@ -40,6 +40,9 @@ function Card({ card }) {
         // display: card?.FE_PlaceholderCard ? 'none' : 'block',
         opacity: card?.FE_PlaceholderCard ? '0' : '1', //có thể sử dụng hai dòng này cũng được, thay vì display hay không thì ta cho chiều cao = 0
         height: card?.FE_PlaceholderCard ? '6px' : 'unset',
+        // hai dòng này đê di chuột qua Card nó hiệu border lên thôi
+        border: '1px solid transparent',
+        '&:hover': { borderColor: (theme) => theme.palette.primary.main }
       }}
     >
       {card?.cover && <CardMedia sx={{ height: 140 }} image={card.cover}/>}
