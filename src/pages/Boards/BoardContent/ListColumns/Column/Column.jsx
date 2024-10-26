@@ -22,6 +22,7 @@ import { mapOrder } from "~/utils/sorts"
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from "react"
+import { toast } from 'react-toastify'
 import theme from "~/theme"
 
 
@@ -55,7 +56,7 @@ function Column({ column }) {
   const [newCardTitle, setNewCardTitle] = useState('')
   const addNewCard = () => {
     if (!newCardTitle) {
-      console.log('Please enter Card title!')
+      toast.error('Please enter Card title!', { position: "bottom-right" })
       return
     }
 
@@ -178,12 +179,13 @@ function Column({ column }) {
                 alignItems: 'center',
                 gap: 1
               }}>
-                <TextField 
+                <TextField
                   width= '234px'
                   label="Enter column title..." 
                   type="text" 
                   size="small" 
                   variant="outlined"
+                  data-no-dnd="true"
                   autoFocus
                   value={newCardTitle}
                   onChange={e => { setNewCardTitle(e.target.value) }}
@@ -206,6 +208,7 @@ function Column({ column }) {
                 />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Button
+                    data-no-dnd="true"
                     onClick={addNewCard}
                     variant="contained" color="success" size="small"
                     sx={{
@@ -214,8 +217,11 @@ function Column({ column }) {
                       borderColor: (theme) => theme.palette.success.main,
                       '&:hover': { bgcolor: (theme) => theme.palette.success.main }
                     }}
-                  >Add</Button>
+                  >
+                    Add
+                  </Button>
                   <CloseIcon 
+                    data-no-dnd="true"
                     fontSize='small' 
                     sx={{
                       color: (theme) => theme.palette.warning.light, 
