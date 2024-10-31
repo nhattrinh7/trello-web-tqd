@@ -26,7 +26,7 @@ import { toast } from 'react-toastify'
 import theme from "~/theme"
 
 
-function Column({ column }) {
+function Column({ column, createNewCard }) {
   
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
     id: column._id,
@@ -54,11 +54,24 @@ function Column({ column }) {
   const toggleOpenNewCardForm =() => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('Please enter Card title!', { position: "bottom-right" })
       return
     }
+
+    // tạo dữ liệu Card để gọi API
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column._id
+    }
+
+    /**
+     *  Sau tới Advanced sẽ đưa dữ liệu Board ra ngoài Redux Global Store
+     *  và lúc này ta có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những thằng cha phía trên
+     *  Với việc sử dụng Redux như vậy code sẽ clean, chuẩn chỉnh hơn rất nhiều
+     */ 
+    await createNewCard(newCardData)
 
     // console.log(newCardTitle)
     // Gọi API ở đây
@@ -181,7 +194,7 @@ function Column({ column }) {
               }}>
                 <TextField
                   width= '234px'
-                  label="Enter column title..." 
+                  label="Enter card title..." 
                   type="text" 
                   size="small" 
                   variant="outlined"

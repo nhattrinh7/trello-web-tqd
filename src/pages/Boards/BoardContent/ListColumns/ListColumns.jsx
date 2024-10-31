@@ -10,20 +10,28 @@ import { toast } from 'react-toastify'
 import theme from "~/theme"
 
 
-function ListColumns({ columns }) { 
+function ListColumns({ columns, createNewColumn, createNewCard }) { 
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm =() => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('Please enter column title!')
       return
     }
 
-    // console.log(newColumnTitle)
-    // Gọi API ở đây
+    // tạo dữ liệu Column để gọi API
+    const newColumnData = {
+      title: newColumnTitle
+    }
+    /**
+     *  Sau tới Advanced sẽ đưa dữ liệu Board ra ngoài Redux Global Store
+     *  và lúc này ta có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những thằng cha phía trên
+     *  Với việc sử dụng Redux như vậy code sẽ clean, chuẩn chỉnh hơn rất nhiều
+     */ 
+    await createNewColumn(newColumnData) // thực hiện hành động ở đây nhưng thực ra là gọi ngược lên function trên _id.jsx
 
     // Đóng lại trạng thái thêm Column mới và Clear Input
     toggleOpenNewColumnForm()
@@ -43,7 +51,7 @@ function ListColumns({ columns }) {
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': {m: 2},
       }}>
-        {columns?.map(column => <Column key={column._id} column={column} />)}
+        {columns?.map(column => <Column key={column._id} column={column} createNewCard={createNewCard}/>)}
         
         {/* Add new column */}
         {!openNewColumnForm
