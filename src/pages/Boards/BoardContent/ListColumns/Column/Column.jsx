@@ -18,15 +18,16 @@ import CloseIcon from '@mui/icons-material/Close'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
 import ListCards from './ListCards/ListCards'
 import TextField from '@mui/material/TextField'
-import { mapOrder } from "~/utils/sorts"
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { useState } from "react"
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
 import theme from "~/theme"
 
 
-function Column({ column, createNewCard }) {
+
+function Column({ column, createNewCard, deleteColumnDetails }) {
   
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
     id: column._id,
@@ -47,14 +48,15 @@ function Column({ column, createNewCard }) {
   const handleClick = (event) => {setAnchorEl(event.currentTarget)}
   const handleClose = () => {setAnchorEl(null)}
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id')
+  // sắp xếp thứ tự card theo cardOrderIds
+  const orderedCards = column.cards
 
   // Code phần Add new Card
   const [openNewCardForm, setOpenNewCardForm] = useState(false)
   const toggleOpenNewCardForm =() => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = async () => {
+  const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('Please enter Card title!', { position: "bottom-right" })
       return
@@ -71,7 +73,7 @@ function Column({ column, createNewCard }) {
      *  và lúc này ta có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những thằng cha phía trên
      *  Với việc sử dụng Redux như vậy code sẽ clean, chuẩn chỉnh hơn rất nhiều
      */ 
-    await createNewCard(newCardData)
+    createNewCard(newCardData)
 
     // console.log(newCardTitle)
     // Gọi API ở đây
@@ -79,6 +81,20 @@ function Column({ column, createNewCard }) {
     // Đóng lại trạng thái thêm Card mới và Clear Input
     toggleOpenNewCardForm()
     setNewCardTitle('')
+  }
+
+  // xử lí xóa Column (sẽ xóa cả các Card bên trong Column)
+  const confirmDeleteColumn = useConfirm()
+  const handleDeleteColumn = () => {
+    confirmDeleteColumn({ 
+      title: 'Delete Column?',
+      description: `Delete thí Column and all Card in it?`,
+    })
+    .then(() => {
+      /* GỌI LÊN COMPONENT CHA CAO NHẤT */
+      deleteColumnDetails(column._id)
+    })
+    .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
   }
 
   return (
@@ -130,12 +146,16 @@ function Column({ column, createNewCard }) {
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
                 'aria-labelledby': 'basic-column-dropdown',
               }}
             >
-              <MenuItem>
-                <ListItemIcon><AddCardIcon fontSize="small" /></ListItemIcon>
+              <MenuItem
+                sx={{ '&:hover': { color: 'success.main', '& .add-card-icon': { color: 'success.main' } } }}
+                onClick={ toggleOpenNewCardForm }
+              >
+                <ListItemIcon><AddCardIcon className="add-card-icon" fontSize="small" /></ListItemIcon>
                 <ListItemText>Add new card</ListItemText>
               </MenuItem>
               <MenuItem>
@@ -151,9 +171,13 @@ function Column({ column, createNewCard }) {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
-                <ListItemIcon><DeleteForeverIcon fontSize="small" /></ListItemIcon>
-                <ListItemText>Remove this column</ListItemText>
+              <MenuItem
+                onClick={handleDeleteColumn}
+                // của thằng con nên phải có dấu cách ở: '& .delete-forever-icon'
+                sx={{ '&:hover': { color: 'error.main', '& .delete-forever-icon': { color: 'error.main' } } }}
+              >
+                <ListItemIcon><DeleteForeverIcon className="delete-forever-icon" fontSize="small" /></ListItemIcon>
+                <ListItemText>Delete this column</ListItemText>
               </MenuItem>
               <MenuItem>
                 <ListItemIcon><Cloud fontSize="small" /></ListItemIcon>
