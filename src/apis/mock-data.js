@@ -22,7 +22,7 @@ export const mockData = {
             _id: 'card-id-01',
             boardId: 'board-id-01',
             columnId: 'column-id-01',
-            title: 'Title of card 01',  
+            title: 'Title of card 01',
             description: 'Markdown Syntax',
             cover: 'https://trungquandev.com/wp-content/uploads/2022/07/fair-mern-stack-advanced-banner-trungquandev.jpg',
             memberIds: ['test-user-id-01'],
@@ -74,9 +74,9 @@ export const mockData = {
          */
         cardOrderIds: ['column-id-04-placehoder-card'],
         cards: [
-          { 
-            _id: 'column-id-04-placeholder-card', 
-            boardId: 'board-id-01', 
+          {
+            _id: 'column-id-04-placeholder-card',
+            boardId: 'board-id-01',
             columnId: 'column-id-04',
             title: 'abcde',
             FE_PlaceholderCard: true

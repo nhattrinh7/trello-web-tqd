@@ -1,4 +1,4 @@
-import Box from "@mui/material/Box"
+import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import React from 'react'
 import Menu from '@mui/material/Menu'
@@ -9,10 +9,10 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ContentCut from '@mui/icons-material/ContentCut'
 import Cloud from '@mui/icons-material/Cloud'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import Tooltip from "@mui/material/Tooltip"
+import Tooltip from '@mui/material/Tooltip'
 import Button from '@mui/material/Button'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
-import { ContentCopy, ContentPaste } from "@mui/icons-material"
+import { ContentCopy, ContentPaste } from '@mui/icons-material'
 import AddCardIcon from '@mui/icons-material/AddCard'
 import CloseIcon from '@mui/icons-material/Close'
 import DragHandleIcon from '@mui/icons-material/DragHandle'
@@ -20,20 +20,27 @@ import ListCards from './ListCards/ListCards'
 import TextField from '@mui/material/TextField'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useState } from "react"
+import { useState } from 'react'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
-import theme from "~/theme"
+import { createNewCardAPI, deleteColumnDetailsAPI } from '~/apis'
+import { cloneDeep } from 'lodash'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
 
 
+function Column({ column }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
-  
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
   })
-  
+
   const dndKitColumnStyles = {
     // touchAction: 'none' dành cho sensor default là Pointer
     /** Nếu sử dụng CSS.Transform như docs thì sẽ bị lỗi kiểu stretch, dùng CSS.Translate thì ko bị stretch */
@@ -44,7 +51,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
   }
 
   const [anchorEl, setAnchorEl] = React.useState(null)
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl)
   const handleClick = (event) => {setAnchorEl(event.currentTarget)}
   const handleClose = () => {setAnchorEl(null)}
 
@@ -56,27 +63,36 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
   const toggleOpenNewCardForm =() => setOpenNewCardForm(!openNewCardForm)
 
   const [newCardTitle, setNewCardTitle] = useState('')
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
-      toast.error('Please enter Card title!', { position: "bottom-right" })
+      toast.error('Please enter Card title!', { position: 'bottom-right' })
       return
     }
-
     // tạo dữ liệu Card để gọi API
     const newCardData = {
       title: newCardTitle,
       columnId: column._id
     }
-
-    /**
-     *  Sau tới Advanced sẽ đưa dữ liệu Board ra ngoài Redux Global Store
-     *  và lúc này ta có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những thằng cha phía trên
-     *  Với việc sử dụng Redux như vậy code sẽ clean, chuẩn chỉnh hơn rất nhiều
-     */ 
-    createNewCard(newCardData)
-
-    // console.log(newCardTitle)
-    // Gọi API ở đây
+    // Gọi API tạo mới Card và cập nhật state board
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      // tạo Card trên Column rỗng (đang chứa 1 placeholder-card) thì bỏ qua placeholder-card chỉ đưa lên Card mới thôi
+      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+      } else {
+        // tạo Card trên Column không rỗng thì push bình thường
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
+    }
+    // setBoard(newBoard)
+    dispatch(updateCurrentActiveBoard(newBoard))
 
     // Đóng lại trạng thái thêm Card mới và Clear Input
     toggleOpenNewCardForm()
@@ -86,22 +102,28 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
   // xử lí xóa Column (sẽ xóa cả các Card bên trong Column)
   const confirmDeleteColumn = useConfirm()
   const handleDeleteColumn = () => {
-    confirmDeleteColumn({ 
+    confirmDeleteColumn({
       title: 'Delete Column?',
-      description: `Delete thí Column and all Card in it?`,
+      description: 'Delete thí Column and all Card in it?'
     })
-    .then(() => {
-      /* GỌI LÊN COMPONENT CHA CAO NHẤT */
-      deleteColumnDetails(column._id)
-    })
-    .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
+      .then(() => {
+        // update state
+        const newBoard = { ...board }
+        newBoard.columns = newBoard.columns.filter(c => c._id !== column._id)
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== column._id)
+        dispatch(updateCurrentActiveBoard(newBoard))
+        // gọi API
+        deleteColumnDetailsAPI(column._id)
+          .then(res => {toast.success(res?.deleteResult)})
+      })
+      .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
   }
 
   return (
     <div
-      ref={setNodeRef} style={dndKitColumnStyles} {...attributes} 
+      ref={setNodeRef} style={dndKitColumnStyles} {...attributes}
     >
-      <Box 
+      <Box
         {...listeners}
         sx={{
           minWidth: '300px',
@@ -132,8 +154,8 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
 
           <Box>
             <Tooltip title='More options'>
-              <ExpandMoreIcon 
-                sx={{color: 'text.primary', cursor: 'pointer'}}
+              <ExpandMoreIcon
+                sx={{ color: 'text.primary', cursor: 'pointer' }}
                 id="basic-column-dropdown"
                 aria-controls={open ? 'basic-menu-column-dropdown' : undefined}
                 aria-haspopup="true"
@@ -148,7 +170,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
               onClose={handleClose}
               onClick={handleClose}
               MenuListProps={{
-                'aria-labelledby': 'basic-column-dropdown',
+                'aria-labelledby': 'basic-column-dropdown'
               }}
             >
               <MenuItem
@@ -184,10 +206,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
                 <ListItemText>Web Clipboard</ListItemText>
               </MenuItem>
             </Menu>
-        <Box>
-      </Box>
           </Box>
-          
         </Box>
 
         {/* Column List Card */}
@@ -196,86 +215,85 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
         {/* Column footer */}
         <Box sx={{
           height: (theme) => theme.trello.columnFooterHeight,
-          p: 2,
+          p: 2
         }}>
           {!openNewCardForm
             ? <Box sx={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between'
-              }}>
-                <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>Add new card</Button>
-                <Tooltip title='Drag to move'>
-                  <DragHandleIcon sx={{cursor: 'pointer'}} />
-                </Tooltip>
-              </Box>
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between'
+            }}>
+              <Button startIcon={<AddCardIcon />} onClick={toggleOpenNewCardForm}>Add new card</Button>
+              <Tooltip title='Drag to move'>
+                <DragHandleIcon sx={{ cursor: 'pointer' }} />
+              </Tooltip>
+            </Box>
             : <Box sx={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1
-              }}>
-                <TextField
-                  width= '234px'
-                  label="Enter card title..." 
-                  type="text" 
-                  size="small" 
-                  variant="outlined"
-                  data-no-dnd="true"
-                  autoFocus
-                  value={newCardTitle}
-                  onChange={e => { setNewCardTitle(e.target.value) }}
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}>
+              <TextField
+                width= '234px'
+                label="Enter card title..."
+                type="text"
+                size="small"
+                variant="outlined"
+                data-no-dnd="true"
+                autoFocus
+                value={newCardTitle}
+                onChange={e => { setNewCardTitle(e.target.value) }}
+                sx={{
+                  '& label': { color: 'text.primary' },
+                  '& input': {
+                    color: (theme) => theme.palette.primary.main,
+                    bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
+                  },
+                  '& label.Mui-focused': { color: (theme) => theme.palette.primary.main },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                    '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
+                    '&:Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main }
+                  },
+                  '& .MuiOutlinedInput-input': {
+                    borderRadius: 1
+                  }
+                }}
+              />
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Button
+                  className='interceptor-loading'
+                  data-no-dnd='true'
+                  onClick={addNewCard}
+                  variant="contained" color="success" size="small"
                   sx={{
-                    '& label': {color: 'text.primary'},
-                    '& input': {
-                      color: (theme) => theme.palette.primary.main,
-                      bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
-                    },
-                    '& label.Mui-focused': { color: (theme) => theme.palette.primary.main },
-                    '& .MuiOutlinedInput-root': {
-                      '& fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                      '&:hover fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                      '&:Mui-focused fieldset': { borderColor: (theme) => theme.palette.primary.main },
-                    },
-                    '& .MuiOutlinedInput-input': {
-                      borderRadius: 1
-                    }
+                    boxShadow: 'none',
+                    border: '0.5px solid',
+                    borderColor: (theme) => theme.palette.success.main,
+                    '&:hover': { bgcolor: (theme) => theme.palette.success.main }
                   }}
-                />
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Button
-                    data-no-dnd="true"
-                    onClick={addNewCard}
-                    variant="contained" color="success" size="small"
-                    sx={{
-                      boxShadow: 'none',
-                      border: '0.5px solid',
-                      borderColor: (theme) => theme.palette.success.main,
-                      '&:hover': { bgcolor: (theme) => theme.palette.success.main }
-                    }}
-                  >
+                >
                     Add
-                  </Button>
-                  <CloseIcon 
-                    data-no-dnd="true"
-                    fontSize='small' 
-                    sx={{
-                      color: (theme) => theme.palette.warning.light, 
-                      cursor: 'pointer',
-                    }}
-                    onClick={ toggleOpenNewCardForm }
-                  />
-                </Box>
+                </Button>
+                <CloseIcon
+                  data-no-dnd='true'
+                  fontSize='small'
+                  sx={{
+                    color: (theme) => theme.palette.warning.light,
+                    cursor: 'pointer'
+                  }}
+                  onClick={ toggleOpenNewCardForm }
+                />
               </Box>
+            </Box>
           }
-          
         </Box>
 
       </Box>
     </div>
-      
   )
 }
 
-export default Column;
+export default Column

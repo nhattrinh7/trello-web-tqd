@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import authorizedAxiosInstance from '~/utils/authorizeAxios'
 import { API_ROOT } from '~/utils/constants'
-import { mapOrder } from "~/utils/sorts"
-import { isEmpty } from "lodash"
-import { generatePlaceholderCard } from "~/utils/formatters"
+import { mapOrder } from '~/utils/sorts'
+import { isEmpty } from 'lodash'
+import { generatePlaceholderCard } from '~/utils/formatters'
 
 const initialState = {
   currentActiveBoard: null
@@ -13,7 +13,7 @@ const initialState = {
 export const fetchBoardDetailsAPI = createAsyncThunk(
   'activeBoard/fetchBoardDetailsAPI',
   async (boardId) => {
-    const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
+    const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards/${boardId}`)
     return response.data
   }
 )
@@ -27,19 +27,19 @@ export const activeBoardSlice = createSlice({
       let board = action.payload
 
       state.currentActiveBoard = board
-    },
+    }
   },
 
   extraReducers: (builder) => {
     builder.addCase(fetchBoardDetailsAPI.fulfilled, (state, action) => { // hầu như chỉ bắt fulfilled vì lỗi bị bắt ở axios rồi
       // action.payload ở đây chính là response.data trả về ở trên
       let board = action.payload
-      
+
       // sắp xếp thứ tự các column luôn ở đây trước khi đưa dữ liệu xuống bên dưới các component con (v71)
       board.columns = mapOrder(board.columns, board.columnOrderIds, '_id')
 
       board.columns.forEach(column => {
-        if(isEmpty(column.cards)) {
+        if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)]
           column.cardOrderIds = [generatePlaceholderCard(column)._id]
         } else {
@@ -49,7 +49,7 @@ export const activeBoardSlice = createSlice({
       })
 
       state.currentActiveBoard = board
-    }) 
+    })
   }
 })
 

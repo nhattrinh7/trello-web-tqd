@@ -4,20 +4,31 @@ import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import CloseIcon from '@mui/icons-material/Close'
+import { toast } from 'react-toastify'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import { useState } from 'react'
-import { toast } from 'react-toastify'
-// import theme from "~/theme"
+import { createNewColumnAPI } from '~/apis'
+import { generatePlaceholderCard } from '~/utils/formatters'
+import { cloneDeep } from 'lodash'
+import {
+  updateCurrentActiveBoard,
+  selectCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
+import { useDispatch, useSelector } from 'react-redux'
 
 
-function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
+function ListColumns({ columns }) {
+  const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
 
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false)
   const toggleOpenNewColumnForm =() => setOpenNewColumnForm(!openNewColumnForm)
 
   const [newColumnTitle, setNewColumnTitle] = useState('')
+
   const addNewColumn = async () => {
     if (!newColumnTitle) {
+      toast.error('Please enter Column title!', { position: 'bottom-right' })
       return
     }
 
@@ -25,6 +36,8 @@ function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
     const newColumnData = {
       title: newColumnTitle
     }
+
+    // Func này có nhiệm vụ gọi API tạo mới Column và cập nhật dữ liệu thằng state: board - được chuyển từ _id sang
     const createdColumn = await createNewColumnAPI({
       ...newColumnData,
       boardId: board._id
@@ -42,7 +55,7 @@ function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
     const newBoard = cloneDeep(board)
     newBoard.columns.push(createdColumn)
     newBoard.columnOrderIds.push(createdColumn._id)
-    // setBoard(newBoard)
+
     dispatch(updateCurrentActiveBoard(newBoard))
 
     // Đóng lại trạng thái thêm Column mới và Clear Input
@@ -63,12 +76,8 @@ function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column => <Column
-          key={column._id}
-          column={column}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
-        />)}
+
+        {columns?.map(column => <Column key={column._id} column={column}/>)}
 
         {/* Add new column */}
         {!openNewColumnForm
@@ -131,6 +140,7 @@ function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
             />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               <Button
+                className='interceptor-loading'
                 onClick={addNewColumn}
                 variant="contained" color="success" size="small"
                 sx={{
@@ -139,7 +149,8 @@ function ListColumns({ columns, createNewCard, deleteColumnDetails }) {
                   borderColor: (theme) => theme.palette.success.main,
                   '&:hover': { bgcolor: (theme) => theme.palette.success.main }
                 }}
-              >Add Column</Button>
+              >Add Column
+              </Button>
               <CloseIcon
                 fontSize='small'
                 sx={{

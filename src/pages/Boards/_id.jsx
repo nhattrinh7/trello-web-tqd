@@ -1,69 +1,37 @@
 import Container from '@mui/material/Container'
-import Box from '@mui/material/Box'
-import CircularProgress from '@mui/material/CircularProgress'
-import Typography from '@mui/material/Typography'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 // import { mockData } from "~/apis/mock-data"
 import { useEffect } from 'react'
 import {
-  createNewColumnAPI,
-  createNewCardAPI,
   updateBoardDetailsAPI,
   updateColumnDetailsAPI,
-  moveCardToDifferentColumnAPI,
-  deleteColumnDetailsAPI
+  moveCardToDifferentColumnAPI
 } from '~/apis'
-import { generatePlaceholderCard } from '~/utils/formatters'
-import { cloneDeep, isEmpty } from 'lodash'
-import { toast } from 'react-toastify'
+
+import { cloneDeep } from 'lodash'
 import {
   fetchBoardDetailsAPI,
   updateCurrentActiveBoard,
   selectCurrentActiveBoard
 } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 
 function Board() {
   const dispatch = useDispatch()
   // const [board, setBoard] = useState(null) KHÔNG DÙNG STATE CỦA COMPONENT NỮA MÀ DÙNG STATE CỦA REDUX
   const board = useSelector(selectCurrentActiveBoard)
 
-  // gọi API cần boardId thì FE cần truyền cho BE cái boardId, sẽ lấy về được thông tin của Board đó
+  const { boardId } = useParams()
+
+
   useEffect(() => {
-    // lấy boardId từ URL về đây ném vào trong này, tuy nhiên phức tạp nên phần Advanced mới có (sử dụng react-router-dom), tạm thời fix cứng
-    const boardId = '671afec19c18018935a55be5'
-    // Call API
     dispatch(fetchBoardDetailsAPI(boardId))
-  }, [dispatch])
+  }, [dispatch, boardId])
 
-  const createNewColumn = async (newColumnData) => { // Func này có nhiệm vụ gọi API tạo mới Column và cập nhật dữ liệu thằng state: board
-  }
-
-  const createNewCard = async (newCardData) => {
-    const createdCard = await createNewCardAPI({
-      ...newCardData,
-      boardId: board._id
-    })
-
-    const newBoard = cloneDeep(board)
-    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
-    if (columnToUpdate) {
-      // tạo Card trên Column rỗng (đang chứa 1 placeholder-card) thì bỏ qua placeholder-card chỉ đưa lên Card mới thôi
-      if (columnToUpdate.cards.some(card => card.FE_PlaceholderCard)) {
-        columnToUpdate.cards = [createdCard]
-        columnToUpdate.cardOrderIds = [createdCard._id]
-
-      } else {
-        // tạo Card trên Column không rỗng thì push bình thường
-        columnToUpdate.cards.push(createdCard)
-        columnToUpdate.cardOrderIds.push(createdCard._id)
-      }
-    }
-    // setBoard(newBoard)
-    dispatch(updateCurrentActiveBoard(newBoard))
-  }
 
   // KÉO THẢ COLUMN CHÍNH LÀ UPDATE BOARD
   // Func này có nhiệm vụ gọi API và cập nhật khi kéo thả Column xong xuôi, cập nhật thứ tự Column (columnOrderIds của Board chứa nó) sau khi kéo thả
@@ -127,35 +95,9 @@ function Board() {
     })
   }
 
-  const deleteColumnDetails = (columnId) => {
-    // update state
-    const newBoard = { ...board }
-    newBoard.columns = newBoard.columns.filter(column => column._id !== columnId)
-    newBoard.columnOrderIds = newBoard.columnOrderIds.filter(_id => _id !== columnId)
-    // setBoard(newBoard)
-    dispatch(updateCurrentActiveBoard(newBoard))
-
-    // gọi API
-    deleteColumnDetailsAPI(columnId)
-      .then(res => {
-        toast.success(res?.deleteResult)
-      })
-  }
 
   if (!board) {
-    return (
-      <Box sx={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: 2,
-        width: '100vw',
-        height: '100vh'
-      }}>
-        <CircularProgress />
-        <Typography>Loading Board...</Typography>
-      </Box>
-    )
+    return <PageLoadingSpinner caption='Loading board ....'/>
   }
 
   return (
@@ -165,9 +107,8 @@ function Board() {
       <BoardContent
         board={board}
 
-        createNewCard={createNewCard}
-        deleteColumnDetails={deleteColumnDetails}
-
+        // 3 cái move ở đây thì giữ nguyên ko Refactor để code xử lí kéo thả ở BoardContent ko bị quá dài mất kiểm soát
+        // vả lại _id với BoardContent chỉ chênh 1 cấp nên truyền vẫn rất vô tư
         moveColumns={moveColumns}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumn={moveCardToDifferentColumn}
