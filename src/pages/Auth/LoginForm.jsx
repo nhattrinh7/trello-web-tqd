@@ -38,11 +38,8 @@ function LoginForm() {
   const submitLogIn = (data) => {
     const { email, password } = data
 
-    toast.promise(
-      dispatch(loginUserAPI({ email, password })),
-      { pending: 'Logging in...' }
+    toast.promise(dispatch(loginUserAPI({ email, password })), { pending: 'Logging in...' }
     ).then(res => {
-      console.log(res)
       // Đoạn này phải kiểm tra không có lỗi (login thành công) thì mới redirect về route /
       if (!res.error) navigate('/')
     })

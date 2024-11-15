@@ -13,6 +13,7 @@ import Logout from '@mui/icons-material/Logout'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { useConfirm } from 'material-ui-confirm'
+import { Link } from 'react-router-dom'
 
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
@@ -57,6 +58,7 @@ function Profiles() {
           />
         </IconButton>
       </Tooltip>
+
       <Menu
         id="basic-menu-profiles"
         anchorEl={anchorEl}
@@ -67,27 +69,20 @@ function Profiles() {
           'aria-labelledby': 'basic-button-profiles'
         }}
       >
-        <MenuItem
-          sx={{
-            '&:hover': { color: 'success.main' }
-          }}
-        >
-          <Avatar
-            src={currentUser?.avatar}
-            sx={{ mr: 1, width: '32px', height: '32px' }}
-          /> Profile
-        </MenuItem>
+        <Link to="/settings/account" style={{ color: 'inherit', textDecoration: 'none' }}>
+          <MenuItem sx={{ '&:hover': { color: 'success.main' } }}>
+            <Avatar src={currentUser?.avatar} sx={{ mr: 1, width: '32px', height: '32px' }}/> Profile
+          </MenuItem>
+        </Link>
+
         <Divider />
+
         <MenuItem>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
+          <ListItemIcon><PersonAdd fontSize="small" /></ListItemIcon>
           Add another account
         </MenuItem>
         <MenuItem>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
+          <ListItemIcon><Settings fontSize="small" /></ListItemIcon>
           Settings
         </MenuItem>
         <MenuItem
@@ -99,9 +94,7 @@ function Profiles() {
             }
           }}
         >
-          <ListItemIcon>
-            <Logout className='logout-icon' fontSize="small" />
-          </ListItemIcon>
+          <ListItemIcon><Logout className='logout-icon' fontSize="small" /></ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
