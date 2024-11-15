@@ -104,7 +104,7 @@ function Column({ column }) {
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
       title: 'Delete Column?',
-      description: 'Delete thí Column and all Card in it?'
+      description: 'Delete this Column and all Card in it?'
     })
       .then(() => {
         // update state

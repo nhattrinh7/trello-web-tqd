@@ -17,6 +17,19 @@ export const loginUserAPI = createAsyncThunk(
   }
 )
 
+
+// Logout có 2 trường hợp là người dùng chủ động logout (show message logout thành công) hoặc do lỗi nên logout (ko show)
+export const logoutUserAPI = createAsyncThunk(
+  'user/logoutUserAPI',
+  async (showSuccessMessage = true) => {
+    const response = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/users/logout`)
+    if (showSuccessMessage) {
+      toast.success('Logged out successfully!')
+    }
+    return response.data
+  }
+)
+
 // Khởi tạo một cái Slice trong kho lưu trữ - Redux Store
 export const userSlice = createSlice({
   name: 'user',
@@ -28,6 +41,11 @@ export const userSlice = createSlice({
     builder.addCase(loginUserAPI.fulfilled, (state, action) => {
       const user = action.payload
       state.currentUser = user
+    })
+    builder.addCase(logoutUserAPI.fulfilled, (state) => {
+      // API logout sau khi call thành công sẽ clear thông tin currentUser về null tại đây
+      // Kết hợp ProtectedRoute ở App.js code sẽ điều hướng về trang Login
+      state.currentUser = null
     })
   }
 })

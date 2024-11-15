@@ -1,14 +1,22 @@
-
-import { useLocation } from 'react-router-dom'
+import { useLocation, Navigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+
 
 function Auth() {
   const location = useLocation()
   // console.log(location)
   const isLogin = location.pathname === '/login'
   const isRegister = location.pathname === '/register'
+
+  // có currentUser được persist trong localstorage thì phải ở trong, ko dc tự sửa URL ra ngoài trang login
+  const currentUser = useSelector(selectCurrentUser)
+  if (currentUser) {
+    return <Navigate to='/' replace='true'/>
+  }
 
   return (
     <Box sx={{
