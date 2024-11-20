@@ -40,7 +40,10 @@ function AppBar() {
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <AppsIcon sx={{ color: 'white' }}/>
+        <Link to="/boards">
+          <AppsIcon sx={{ color: 'white' }}/>
+        </Link>
+
         <Link to="/" style={{ textDecoration: 'none' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
             <SvgIcon component={TrelloIcon} fontSize='small' inheritViewBox sx={{ color: 'white' }} />
@@ -76,7 +79,7 @@ function AppBar() {
             '& .MuiOutlinedInput-root': {
               '& fieldset': { borderColor: 'white' },
               '&:hover fieldset': { borderColor: 'white' },
-              '&:Mui-focused fieldset': { borderColor: 'white' }
+              '&.Mui-focused fieldset': { borderColor: 'white' }
             }
           }}
           slotProps={{

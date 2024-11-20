@@ -1,4 +1,3 @@
-import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Avatar from '@mui/material/Avatar'
@@ -6,27 +5,14 @@ import Tooltip from '@mui/material/Tooltip'
 import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-
 import { FIELD_REQUIRED_MESSAGE, singleFileValidator } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useSelector, useDispatch } from 'react-redux'
 import { selectCurrentUser, updateUserAPI } from '~/redux/user/userSlice'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-toastify'
+import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 
-// Xử lý custom đẹp cái input file ở đây: https://mui.com/material-ui/react-button/#file-upload
-// Ngoài ra note thêm lib này từ docs của MUI nó recommend nếu cần dùng: https://github.com/viclafouch/mui-file-input
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1
-})
 
 function AccountTab() {
   const dispatch = useDispatch()
@@ -58,8 +44,7 @@ function AccountTab() {
   }
 
   const uploadAvatar = (e) => {
-    // Lấy file thông qua e.target?.files[0] và validate nó trước khi xử lý
-    console.log('e.target?.files[0]: ', e.target?.files[0])
+    // Lấy file thông qua e.target?.files[0] và Validate file trước khi xử lý
     const error = singleFileValidator(e.target?.files[0])
     if (error) {
       toast.error(error)
@@ -69,13 +54,18 @@ function AccountTab() {
     // Sử dụng FormData để xử lý dữ liệu liên quan tới file khi gọi API
     let reqData = new FormData()
     reqData.append('avatar', e.target?.files[0])
-    // Cách để log được dữ liệu thông qua FormData
-    console.log('reqData: ', reqData)
-    for (const value of reqData.values()) {
-      console.log('reqData Value: ', value)
-    }
 
     // Gọi API...
+    toast.promise(dispatch(updateUserAPI(reqData)), { pending: 'Updating...' }
+    ).then(res => {
+      if (!res.error) {
+        toast.success('User updated successfully!')
+      }
+    })
+
+    // Lưu ý: dù lỗi hay thành công thì cũng vẫn phải clear giá trị file input đi, nếu không sẽ không thể chọn lại file
+    // vì bị lỗi ko chọn cùng 1 file liên tiếp được (vid buoi11)
+    e.target.value = ''
   }
 
   return (

@@ -16,7 +16,7 @@ const theme = createTheme({
     columnFooterHeight: COLUMN_FOOTER_HEIGHT
   },
   colorSchemes: {
-    dark: true,
+    dark: true
   },
   components: {
     MuiCssBaseline: {
@@ -31,7 +31,7 @@ const theme = createTheme({
             borderRadius: '8px'
           },
           '*::-webkit-scrollbar-thumb:hover': {
-            backgroundColor: 'white',
+            backgroundColor: 'white'
           }
         }
       }
@@ -41,9 +41,9 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
           borderWidth: '1px',
-          '&:hover': {borderWidth: '2px'}
-        },
-      },
+          '&:hover': { borderWidth: '2px' }
+        }
+      }
     },
     MuiOutlinedInput: {
       styleOverrides: {
@@ -59,35 +59,35 @@ const theme = createTheme({
           //   },
           // },
           '& fieldset': {
-            borderWidth: '1px !important' 
+            borderWidth: '1px !important'
           },
           '&:hover fieldset': {
-            borderWidth: '2px !important' 
+            borderWidth: '2px !important'
           },
           '&:Mui-focused fieldset': {
-            borderWidth: '2px !important' 
+            borderWidth: '2px !important'
           }
         })
-      },
+      }
     },
     MuiInputLabel: {
       styleOverrides: {
         root: () => ({
           // color: theme.palette.primary.main,
-          fontSize: '0.875rem',
+          fontSize: '0.875rem'
         })
-      },
+      }
     },
     MuiTypography: {
       styleOverrides: {
         root: () => ({
           '&.Muitypography-body1': {
-            fontSize: '0.875rem',
+            fontSize: '0.875rem'
           }
         })
-      },
-    },
+      }
+    }
   }
-}) 
+})
 export default theme
 
