@@ -3,22 +3,19 @@ import { createSlice } from '@reduxjs/toolkit'
 // Khởi tạo giá trị của một Slice trong redux
 const initialState = {
   currentActiveCard: null,
-  isShowModalActiveCard: false
+  isShowModalActiveCard: false // fix trường hợp update Card title mà blur luôn ra ngoài bị tắt rồi lại bật Modal
 }
 
 // Khởi tạo một slice trong kho lưu trữ - redux store
 export const activeCardSlice = createSlice({
   name: 'activeCard',
   initialState,
-  // Reducers: Nơi xử lý dữ liệu đồng bộ
   reducers: {
-    // Lưu ý luôn là ở đây cần cặp ngoặc nhọn cho function trong reducer cho dù code bên trong chỉ có 1 dòng, đây là rule của Redux
-    // https://redux-toolkit.js.org/usage/immer-reducers#mutating-and-returning-state
     showModalActiveCard: (state) => {
       state.isShowModalActiveCard = true
     },
 
-    // Clear data và đóng modal ActiveCard
+    // Clear data và đóng Modal ActiveCard
     clearAndHideCurrentActiveCard: (state) => {
       state.currentActiveCard = null
       state.isShowModalActiveCard = false
@@ -32,7 +29,6 @@ export const activeCardSlice = createSlice({
       state.currentActiveCard = fullCard
     }
   },
-  // ExtraReducers: Xử lý dữ liệu bất đồng bộ
   // eslint-disable-next-line no-unused-vars
   extraReducers: (builder) => {}
 })

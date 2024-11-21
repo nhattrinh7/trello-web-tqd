@@ -12,7 +12,6 @@ import Templates from './Menus/Templates'
 import Profiles from './Menus/Profiles'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
@@ -21,6 +20,8 @@ import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
+import Notifications from './Notifications/Notifications'
+
 
 function AppBar() {
   const [searchValue, setSearchvalue] = useState('')
@@ -103,13 +104,12 @@ function AppBar() {
             }
           }}
         />
+        {/* Chỉnh dark - light mode */}
         <ModeSelect />
 
-        <Tooltip title='Notification'>
-          <Badge color="secondary" variant="dot" sx={{ cursor: 'pointer' }}>
-            <NotificationsNoneIcon sx={{ color: 'white' }} />
-          </Badge>
-        </Tooltip>
+        {/* Thông báo */}
+        <Notifications />
+
         <Tooltip title='Help'>
           <Badge color="secondary" variant="dot" sx={{ cursor: 'pointer' }}>
             <HelpOutlineIcon sx={{ color: 'white' }}/>

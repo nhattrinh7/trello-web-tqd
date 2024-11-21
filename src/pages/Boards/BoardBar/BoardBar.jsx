@@ -6,10 +6,9 @@ import AddToDriveIcon from '@mui/icons-material/AddToDrive'
 import BoltIcon from '@mui/icons-material/Bolt'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import { Tooltip } from '@mui/material'
-import Button from '@mui/material/Button'
-import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { capitalizeFirstLetter } from '~/utils/formatters'
 import BoardUserGroup from './BoardUserGroup'
+import InviteBoardUser from './InviteBoardUser'
 
 
 const MENU_STYLES = {
@@ -46,7 +45,7 @@ function BoardBar({ board }) {
         </Tooltip>
         <Chip
           sx={MENU_STYLES}
-          icon={<VpnLockIcon />} 
+          icon={<VpnLockIcon />}
           label={capitalizeFirstLetter(board?.type)}
           clickable
         />
@@ -71,16 +70,10 @@ function BoardBar({ board }) {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <Button
-          variant="outlined"
-          startIcon={<PersonAddIcon />}
-          sx={{
-            color:'white',
-            borderColor: 'white'
-          }}
-        >
-            Invited
-        </Button>
+
+        {/* Mời user vào board */}
+        <InviteBoardUser boardId={board._id} />
+
         {/* Xử lí hiển thị danh sách thành viên của Boarđ */}
         <BoardUserGroup boardUsers={board?.FE_allUsers}/>
       </Box>
