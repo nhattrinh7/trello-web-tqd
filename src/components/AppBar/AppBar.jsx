@@ -11,16 +11,13 @@ import Starred from './Menus/Starred'
 import Templates from './Menus/Templates'
 import Profiles from './Menus/Profiles'
 import Button from '@mui/material/Button'
-import TextField from '@mui/material/TextField'
 import Badge from '@mui/material/Badge'
 import Tooltip from '@mui/material/Tooltip'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import AddToPhotosIcon from '@mui/icons-material/AddToPhotos'
-import InputAdornment from '@mui/material/InputAdornment'
-import SearchIcon from '@mui/icons-material/Search'
-import CloseIcon from '@mui/icons-material/Close'
 import { Link } from 'react-router-dom'
 import Notifications from './Notifications/Notifications'
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 
 
 function AppBar() {
@@ -63,7 +60,7 @@ function AppBar() {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        <TextField
+        {/* <TextField
           id="outlined-search"
           label="Search..."
           type="text"
@@ -103,7 +100,10 @@ function AppBar() {
               )
             }
           }}
-        />
+        /> */}
+        {/* Tìm kiếm nhanh 1 cái Board */}
+        <AutoCompleteSearchBoard />
+
         {/* Chỉnh dark - light mode */}
         <ModeSelect />
 
