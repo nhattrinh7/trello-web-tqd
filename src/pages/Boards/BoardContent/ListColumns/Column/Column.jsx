@@ -128,7 +128,7 @@ function Column({ column }) {
 
       dispatch(updateCurrentActiveBoard(newBoard))
     })
-  } 
+  }
 
   return (
     <div

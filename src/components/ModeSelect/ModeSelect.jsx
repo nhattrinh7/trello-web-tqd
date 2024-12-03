@@ -1,5 +1,5 @@
 
-import { useColorScheme } from '@mui/material';
+import { useColorScheme } from '@mui/material'
 import Box from '@mui/material/Box'
 import Select from '@mui/material/Select'
 import MenuItem from '@mui/material/MenuItem'
@@ -8,35 +8,36 @@ import DarkModeIcon from '@mui/icons-material/DarkMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
 
 function ModeSelect() {
-  const { mode, setMode } = useColorScheme();
+  const { mode, setMode } = useColorScheme()
   if (!mode) {
-    return null;
+    return null
   }
   return (
     <Box>
       <Select sx={{
-          height: '38px',
-          color: 'white',
-          // '.MuiOutlinedInput-root':  {borderColor: 'white'},
-          // '&:hover .MuiOutlinedInput-root': {borderColor: 'white'},
-          '& fieldset': {borderColor: 'white'},
-          // '&:hover fieldset': {borderColor: 'white'},
-          // '.MuiSvgicon-root': {color: 'white'}
-        }} 
-        value={mode} 
-        onChange={(event) => setMode(event.target.value)}>
+        height: '38px',
+        color: 'white',
+        // '.MuiOutlinedInput-root':  {borderColor: 'white'},
+        // '&:hover .MuiOutlinedInput-root': {borderColor: 'white'},
+        '& fieldset': { borderColor: 'white' }
+        // '&:hover fieldset': {borderColor: 'white'},
+        // '.MuiSvgicon-root': {color: 'white'}
+      }}
+      value={mode}
+      onChange={(event) => setMode(event.target.value)}
+      >
         <MenuItem value="system">
-          <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <SettingsBrightnessIcon fontSize='small'/> System
           </Box>
         </MenuItem>
         <MenuItem value="light">
-          <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LightModeIcon fontSize='small'/> Light
           </Box>
         </MenuItem>
         <MenuItem value="dark">
-          <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <DarkModeIcon fontSize='small'/> Dark
           </Box>
         </MenuItem>

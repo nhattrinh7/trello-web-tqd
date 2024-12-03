@@ -38,7 +38,7 @@ function AccountTab() {
     ).then(res => {
       // Đoạn này phải kiểm tra không có lỗi (update thành công) thì mới thực hiện các hành động cần thiết
       if (!res.error) {
-        toast.success('User updated successfully!')
+        toast.success('User updated successfully!', { pauseOnHover: false })
       }
     })
   }
