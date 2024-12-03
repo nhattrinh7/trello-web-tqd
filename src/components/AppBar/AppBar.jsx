@@ -1,4 +1,4 @@
-import { useState } from 'react'
+// import { useState } from 'react'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -21,7 +21,6 @@ import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
 
 
 function AppBar() {
-  const [searchValue, setSearchvalue] = useState('')
 
   return (
     <Box
@@ -37,7 +36,7 @@ function AppBar() {
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0'),
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'bottom', gap: 2 }}>
         <Link to="/boards">
           <AppsIcon sx={{ color: 'white' }}/>
         </Link>

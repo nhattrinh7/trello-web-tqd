@@ -69,7 +69,7 @@ function Recent() {
         </MenuItem>
       </Menu>
     </Box>
-  );
+  )
 }
 
 export default Recent

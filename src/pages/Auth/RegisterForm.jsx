@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
@@ -36,7 +35,7 @@ function RegisterForm() {
 
   return (
     <form onSubmit={handleSubmit(submitRegister)}>
-      <Zoom in={true} style={{ transitionDelay: '200ms' }}>
+      <Zoom in={true} style={{ transitionDelay: '500ms' }}>
         <MuiCard sx={{ minWidth: 380, maxWidth: 380, marginTop: '6em' }}>
           <Box sx={{
             margin: '1em',
@@ -48,7 +47,6 @@ function RegisterForm() {
             <Avatar sx={{ bgcolor: 'primary.main' }}><TrelloIcon /></Avatar>
           </Box>
           <Box sx={{ marginTop: '1em', display: 'flex', justifyContent: 'center', color: theme => theme.palette.grey[500] }}>
-            Author: TrungQuanDev
           </Box>
           <Box sx={{ padding: '0 1em 1em 1em' }}>
             <Box sx={{ marginTop: '1em' }}>

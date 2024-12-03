@@ -8,7 +8,6 @@ const initialState = {
   currentUser: null
 }
 
-
 export const loginUserAPI = createAsyncThunk(
   'user/loginUserAPI',
   async (data) => {
@@ -16,7 +15,6 @@ export const loginUserAPI = createAsyncThunk(
     return response.data
   }
 )
-
 
 // Logout có 2 trường hợp là người dùng chủ động logout (show message logout thành công) hoặc do lỗi nên logout (ko show)
 export const logoutUserAPI = createAsyncThunk(
@@ -62,7 +60,6 @@ export const userSlice = createSlice({
   }
 })
 
-// Action creators are generated for each case reducer function
 // Actions: Là nơi dành cho các components bên dưới gọi bằng dispatch() tới nó để cập nhật lại dữ liệu thông qua reducer (chạy đồng bộ)
 // Để ý ở trên thì không thấy properties actions đâu cả, bởi vì những cái actions này đơn giản là được thằng redux tạo tự động theo tên của reducer nhé.
 // export const {} = userSlice.actions

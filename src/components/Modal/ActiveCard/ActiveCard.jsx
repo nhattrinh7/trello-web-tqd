@@ -5,25 +5,10 @@ import CreditCardIcon from '@mui/icons-material/CreditCard'
 import CancelIcon from '@mui/icons-material/Cancel'
 import Grid from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
-import Divider from '@mui/material/Divider'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
-import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined'
-import TaskAltOutlinedIcon from '@mui/icons-material/TaskAltOutlined'
-import WatchLaterOutlinedIcon from '@mui/icons-material/WatchLaterOutlined'
-import AttachFileOutlinedIcon from '@mui/icons-material/AttachFileOutlined'
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
-import AutoFixHighOutlinedIcon from '@mui/icons-material/AutoFixHighOutlined'
-import AspectRatioOutlinedIcon from '@mui/icons-material/AspectRatioOutlined'
-import AddToDriveOutlinedIcon from '@mui/icons-material/AddToDriveOutlined'
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined'
-import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined'
-import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined'
-import AutoAwesomeOutlinedIcon from '@mui/icons-material/AutoAwesomeOutlined'
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
-
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
 import { singleFileValidator } from '~/utils/validators'
@@ -38,11 +23,17 @@ import {
   updateCurrentActiveCard,
   selectIsShowModalActiveCard
 } from '~/redux/activeCard/activeCardSlice'
-import { updateCardDetailsAPI } from '~/apis'
+import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { updateCardDetailsAPI, deleteCardAPI } from '~/apis'
 import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { selectCurrentUser } from '~/redux/user/userSlice'
-import { styled } from '@mui/material/styles'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
+import ExitToAppIcon from '@mui/icons-material/ExitToApp'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import { useConfirm } from 'material-ui-confirm'
+import { styled } from '@mui/material/styles'
+import { cloneDeep } from 'lodash'
 
 
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -65,15 +56,14 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   }
 }))
 
-/**
- * Note: Modal là một low-component mà bọn MUI sử dụng bên trong những thứ như Dialog, Drawer, Menu, Popover. Ở đây dĩ nhiên chúng ta có thể sử dụng Dialog cũng không thành vấn đề gì, nhưng sẽ sử dụng Modal để dễ linh hoạt tùy biến giao diện từ con số 0 cho phù hợp với mọi nhu cầu nhé.
- */
+
 function ActiveCard() {
   // Không dùng state để đóng mở Modal nữa vì ta sẽ check bằng isShowModalActiveCard bên redux
   // const [isOpen, setIsOpen] = useState(true)
   // const handleOpenModal = () => setIsOpen(true)
 
   const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
   const activeCard = useSelector(selectCurrentActiveCard)
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
   const currentUser = useSelector(selectCurrentUser)
@@ -126,6 +116,32 @@ function ActiveCard() {
     callApiUpdateCard({ incomingMemberInfo })
   }
 
+  const confirmDeleteCard = useConfirm()
+  const handleDeleteCard = () => {
+    confirmDeleteCard({
+      title: 'Delete card?',
+      description: 'Delete this Card forever?'
+    })
+      .then(() => {
+        // const newBoard = { ...board }
+        const newBoard = cloneDeep(board)
+        const targetColumn = newBoard.columns.filter(column => column._id === activeCard.columnId)
+        // console.log('activeCard', activeCard)
+        // console.log('targetColumn', targetColumn)
+        const column = targetColumn[0]
+        // console.log('column before', column)
+        column.cards = column.cards.filter(card => card._id !== activeCard._id)
+        column.cardOrderIds = column.cardOrderIds.filter(_id => _id !== activeCard._id)
+        // console.log('column after', column)
+        dispatch(updateCurrentActiveBoard(newBoard))
+        dispatch(clearAndHideCurrentActiveCard())
+
+        deleteCardAPI(activeCard._id)
+          .then(res => {toast.success(res?.deleteResult)})
+      })
+      .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
+  }
+
   return (
     <Modal
       disableScrollLock
@@ -158,7 +174,7 @@ function ActiveCard() {
           <Box sx={{ mb: 4 }}>
             <img
               style={{ width: '100%', height: '320px', borderRadius: '6px', objectFit: 'cover' }}
-              src={activeCard.cover}
+              src={activeCard?.cover}
               alt="card-cover"
             />
           </Box>
@@ -174,9 +190,9 @@ function ActiveCard() {
             onChangedValue={onUpdateCardTitle} />
         </Box>
 
-        <Grid container spacing={2} sx={{ mb: 3 }}>
+        <Grid container spacing={4} sx={{ mb: 3 }}>
           {/* Left side */}
-          <Grid xs={12} sm={9}>
+          <Grid size={{ xs: 12, sm: 10 }}>
             <Box sx={{ mb: 3 }}>
               <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
 
@@ -215,50 +231,57 @@ function ActiveCard() {
           </Grid>
 
           {/* Right side */}
-          <Grid xs={12} sm={3}>
+          <Grid size={{ xs: 12, sm: 2 }}>
             <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Add To Card</Typography>
             <Stack direction="column" spacing={1}>
-
-              {/* Feature 05: Xử lý hành động bản thân user tự join hoặc tự leave Card */}
-              {/* Nếu user chưa là thành viên mảng memberIds thì nút Join mới hiện, và mặc định hành động nút Join là ADD */}
-              {!activeCard?.memberIds.includes(currentUser._id) &&
-                <SidebarItem
+              {/* Feature 05: Xử lý hành động bản thân user tự join vào card */}
+              {/* Nếu user hiện tại đang đăng nhập chưa thuộc mảng memberIds của card thì mới cho hiện nút Join và ngược lại */}
+              {activeCard?.memberIds?.includes(currentUser._id)
+                ? <SidebarItem
+                  sx={{ color: 'error.light', '&:hover': { color: 'error.light' } }}
+                  onClick={() => onUpdateCardMembers({
+                    userId: currentUser._id,
+                    action: CARD_MEMBER_ACTIONS.REMOVE
+                  })}
+                >
+                  <ExitToAppIcon fontSize="small" />
+                  Leave
+                </SidebarItem>
+                : <SidebarItem
                   className="active"
                   onClick={() => onUpdateCardMembers({
                     userId: currentUser._id,
                     action: CARD_MEMBER_ACTIONS.ADD
                   })}
                 >
-                  <PersonOutlineOutlinedIcon fontSize="small" />
-                  Join
-                </SidebarItem>
-              }
-              {activeCard?.memberIds.includes(currentUser._id) &&
-                <SidebarItem
-                  className="active"
-                  onClick={() => onUpdateCardMembers({
-                    userId: currentUser._id,
-                    action: CARD_MEMBER_ACTIONS.REMOVE
-                  })}
-                >
-                  <PersonOutlineOutlinedIcon fontSize="small" />
-                  Leave
+                  <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <PersonOutlineOutlinedIcon fontSize="small" />
+                      <span>Join</span>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                      <CheckCircleIcon fontSize="small" sx={{ color: '#27ae60' }} />
+                    </Box>
+                  </Box>
                 </SidebarItem>
               }
 
               {/* Feature 06: Xử lý hành động cập nhật ảnh Cover của Card */}
               <SidebarItem className="active" component="label">
-                <ImageOutlinedIcon fontSize="small" />
-                Cover
+                <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <ImageOutlinedIcon fontSize="small" />
+                    <span>Cover</span>
+                  </Box>
+                </Box>
                 <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
               </SidebarItem>
 
-              <SidebarItem><AttachFileOutlinedIcon fontSize="small" />Attachment</SidebarItem>
-              <SidebarItem><LocalOfferOutlinedIcon fontSize="small" />Labels</SidebarItem>
-              <SidebarItem><TaskAltOutlinedIcon fontSize="small" />Checklist</SidebarItem>
-              <SidebarItem><WatchLaterOutlinedIcon fontSize="small" />Dates</SidebarItem>
-              <SidebarItem><AutoFixHighOutlinedIcon fontSize="small" />Custom Fields</SidebarItem>
+              <SidebarItem onClick={handleDeleteCard}>
+                <DeleteOutlineIcon fontSize="small" variant="outlined"/>Delete
+              </SidebarItem>
             </Stack>
+
           </Grid>
         </Grid>
       </Box>

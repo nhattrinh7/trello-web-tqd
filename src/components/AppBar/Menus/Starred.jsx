@@ -69,7 +69,7 @@ function Starred() {
         </MenuItem>
       </Menu>
     </Box>
-  );
+  )
 }
 
 export default Starred

@@ -69,7 +69,7 @@ function Templates() {
         </MenuItem>
       </Menu>
     </Box>
-  );
+  )
 }
 
 export default Templates

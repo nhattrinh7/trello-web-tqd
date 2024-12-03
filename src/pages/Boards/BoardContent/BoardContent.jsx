@@ -29,8 +29,9 @@ function BoardContent({
   moveCardInTheSameColumn,
   moveCardToDifferentColumn
 }) {
-  const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } })
-  const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 10 } })
+  const mouseSensor = useSensor(MouseSensor, { activationConstraint: { distance: 10 } }) // distance: khoảng cách tính bằng pixels mà đầu vào cảm ứng cần được di chuyển trước khi kích hoạt sự kiện kéo thả
+  const touchSensor = useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 10 } }) // tiếp xúc với màn hình từ 250 mili giây trở đi mới bắt đầu kích hoạt sự kiện kéo thả
+  // trong 250ms ngón tay có thể bị xê dịch trong khoảng 10 pixels mà ko bị hủy thao tác kéo
   const sensors = useSensors(mouseSensor, touchSensor)
   // sử dụng kết hợp sensors là mouse và touch để có trải nghiệm tốt nhất trên mobile
 
@@ -110,7 +111,7 @@ function BoardContent({
         // thêm card đang kéo vào overColumn theo vị trí index mới
         nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, rebuild_activeDraggingCardData)
 
-        //xóa PlacehoderCard 37.2
+        //xóa PlacehoderCard nếu có 37.2
         nextOverColumn.cards = nextOverColumn.cards.filter(card => !card.FE_PlaceholderCard)
 
         // thêm xong thì cập nhật mảng cardOrderIds
@@ -140,7 +141,7 @@ function BoardContent({
 
   // kích hoạt trong quá trình kéo một phần tử
   const handleDragOver = (event) => {
-
+    // Nếu là kéo thả Column thì bỏ qua
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return
 
     const { active, over } = event
@@ -155,6 +156,7 @@ function BoardContent({
     const activeColumn = findColumnByCardId(activeDraggingCardId)
     const overColumn = findColumnByCardId(overCardId)
 
+    // Kéo thả Card trong cùng 1 Column cũng bỏ qua
     if (!activeColumn || !overColumn) return
 
     // kéo card từ column này sang column khác mới tính
@@ -251,9 +253,6 @@ function BoardContent({
 
         /**
          * kéo thả xong thì khi kết thúc kéo thả sẽ gọi API để cập nhật thứ tự mới của Columns vào DB
-         * Sau tới Advanced sẽ đưa dữ liệu Board ra ngoài Redux Global Store
-         * và lúc này ta có thể gọi luôn API ở đây là xong thay vì phải lần lượt gọi ngược lên những thằng cha phía trên
-         * Với việc sử dụng Redux như vậy code sẽ clean, chuẩn chỉnh hơn rất nhiều
          */
         moveColumns(dndOrderedColumns) // gọi API
       }
@@ -271,41 +270,48 @@ function BoardContent({
 
   // chạy handleDragStart > collisionDetectionStrategy > handleDragOver > handleDragEnd
   // bản chất của collisionDetectionStrategy trả về mảng
+  // cần custom thuật toán phát hiện va chạm cho trường hợp kéo thả card giữa các column
   const collisionDetectionStrategy = useCallback((args) => {
     // closestCorners chỉ bị lỗi khi kéo thả Card, kéo Column không bị nên khi kéo Column vẫn dùng closestCorners
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
-      return closestCorners({ ...args })
+      return closestCorners({ ...args }) // bên dưới sẽ được xử lí return về 1 mảng
     }
 
     // Tìm các điểm giao nhau với con trỏ
     const pointerIntersections = pointerWithin(args)
-
+    // console.log('pointerIntersections', pointerIntersections)
+    // console.log('args', args)
     if (!pointerIntersections?.length) return // kéo linh tinh ra ngoài thì ko có va chạm nên sẽ không làm gì cả - pointerIntersections là mảng rỗng
 
     // Thuật toán phát hiện va chạm sẽ trả về một mảng các va cham ở đây
     // const intersections = !!pointerIntersections?.length
     //     ? pointerIntersections : rectIntersection(args)
 
-    //có va chạm thì xử lí
+    // có va chạm thì xử lí
     // Tìm overId đầu tiên trong 1 nùi các điểm va chạm ở trên
     let overId = getFirstCollision(pointerIntersections, 'id')
+    // console.log('overId: ', overId)
 
     // Cần if vì có thể overId = null, null thì sẽ gặp vấn đề
     if (overId) {
-      // over là Column thì tìm tới cái card gần nhất bên trong khu vực va chạm đó dựa vào closestCorners
+      // over là Column thì tìm tới cái card gần nhất bên trong khu vực va chạm đó dựa vào closestCorners, để trả về card id thay vì column id
       // (trong TH này mượt hơn closestCenter), dùng card sẽ ko bị flickering
       const checkColumn = orderedColumns.find(column => column._id === overId)
       if (checkColumn) {
         // console.log('overId before: ', overId) //là columnId
+        // tìm tới cái card gần nhất bên trong khu vực va chạm đó dựa vào closestCorners
         overId = closestCorners({
           ...args,
+          // droppableContainers là 1 mảng các droppable items hay gọi là droppable container cũng được, gồm tạp phí lù các column các card vân vân và mây mây
           droppableContainers: args.droppableContainers.filter(container => {
             return container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id)
           })
         })[0]?.id
-        // console.log('overId after: ', overId)//lúc này là cardId rồi
+        // console.log('overId after: ', overId) // lúc này là cardId rồi
       }
 
+      // Trường hợp kéo card trong cùng column thì checkColumn = null thì sẽ chạy thẳng xuống đây luôn
+      // Làm 2 dòng này với dòng return ở dưới là đã fix dc flickering rồi, tuy nhiên kéo thả hơi giật giật nên cần đoạn checkColumn ở trên
       lastOverId.current = overId //lastOverId là 1 ref của useRef
       return [{ id: overId }]
     }

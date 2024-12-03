@@ -11,10 +11,7 @@ import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 
 function CardUserGroup({ cardMemberIds = [], onUpdateCardMembers }) {
-  /**
-   * Xử lý Popover để ẩn hoặc hiện toàn bộ user trên một cái popup, tương tự docs để tham khảo ở đây:
-   * https://mui.com/material-ui/react-popover/
-   */
+
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
   const popoverId = isOpenPopover ? 'card-all-users-popover' : undefined
@@ -46,11 +43,11 @@ function CardUserGroup({ cardMemberIds = [], onUpdateCardMembers }) {
     <Box sx={{ display: 'flex', gap: '4px', flexWrap: 'wrap' }}>
       {/* Hiển thị các user là thành viên của card */}
       {FE_CardMembers.map((user, index) =>
-        <Tooltip title={user.displayName} key={index}>
+        <Tooltip title={user?.displayName} key={index}>
           <Avatar
             sx={{ width: 34, height: 34, cursor: 'pointer' }}
-            alt={user.displayName}
-            src={user.avatar}
+            alt={user?.displayName}
+            src={user?.avatar}
           />
         </Tooltip>
       )}

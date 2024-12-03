@@ -51,6 +51,6 @@ export const selectIsShowModalActiveCard = (state) => {
   return state.activeCard.isShowModalActiveCard
 }
 
-// Cái file này tên là activeCardSlice NHƯNG chúng ta sẽ export một thứ tên là Reducer, mọi người lưu ý :D
+// Cái file này tên là activeCardSlice NHƯNG chúng ta sẽ export một thứ tên là Reducer, lưu ý :D
 // export default activeCardSlice.reducer
 export const activeCardReducer = activeCardSlice.reducer

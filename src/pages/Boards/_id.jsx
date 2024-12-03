@@ -84,8 +84,9 @@ function Board() {
     // setBoard(newBoard)
     dispatch(updateCurrentActiveBoard(newBoard))
 
-    // chỉ truyền mản rỗng nếu kéo thả nốt Card cuối cùng của prevCardOrderIds, không muốn đẩy placeholder-card lên
     let prevCardOrderIds = dndOrderedColumns.find(c => c._id === prevColumnId)?.cardOrderIds
+
+    // chỉ truyền mản rỗng nếu kéo thả nốt Card cuối cùng của prevCardOrderIds, không muốn đẩy placeholder-card lên
     if (prevCardOrderIds[0].includes('placeholder-card')) prevCardOrderIds = []
 
     moveCardToDifferentColumnAPI({

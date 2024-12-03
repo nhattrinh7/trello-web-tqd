@@ -4,7 +4,6 @@ import PageLoadingSpinner from '~/components/Loading/PageLoadingSpinner'
 import Container from '@mui/material/Container'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
-// Grid: https://mui.com/material-ui/react-grid2/#whats-changed
 import Grid from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
@@ -14,7 +13,7 @@ import HomeIcon from '@mui/icons-material/Home'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
-import CardMedia from '@mui/material/CardMedia'
+// import CardMedia from '@mui/material/CardMedia'
 import Pagination from '@mui/material/Pagination'
 import PaginationItem from '@mui/material/PaginationItem'
 import { Link, useLocation } from 'react-router-dom'
@@ -53,15 +52,17 @@ function Boards() {
   /**
    * Parse chuỗi string search trong location về đối tượng URLSearchParams trong JavaScript
    * https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/URLSearchParams
+   * Parse chuỗi '?page=number' về đối tượng URLSearchParams trong JavaScript:
    */
   const query = new URLSearchParams(location.search)
-  /**
-   * Lấy giá trị page từ query, default sẽ là 1 nếu không tồn tại page từ url.
-   * Nhắc lại kiến thức cơ bản hàm parseInt cần tham số thứ 2 là Hệ thập phân (hệ đếm cơ số 10) để đảm bảo chuẩn số cho phân trang
-   */
+
+  // Lấy giá trị page từ query, default sẽ là 1 nếu không tồn tại page từ url.
+  // Nhắc lại kiến thức cơ bản hàm parseInt cần tham số thứ 2 là Hệ thập phân (hệ đếm cơ số 10) để đảm bảo chuẩn số cho phân trang
+  // Mục đích là để lấy được số của page trên URL
   const page = parseInt(query.get('page') || '1', 10)
 
   // 2 thằng ở dưới dùng chung nên viết gom lại trên đây
+  // hàm trong .then nên tự động nhận được res là kết quả trả về của việc gọi API
   const updateStateBoardData = (res) => {
     setBoards(res.boards || [])
     setTotalBoards(res.totalBoards || 0)
@@ -174,7 +175,7 @@ function Boards() {
                   // Giá trị prop count của component Pagination là để hiển thị tổng số lượng page, công thức là lấy Tổng số lượng bản ghi chia cho số lượng bản ghi muốn hiển thị trên 1 page (ví dụ thường để 12, 24, 26, 48...vv). sau cùng là làm tròn số lên bằng hàm Math.ceil
                   count={Math.ceil(totalBoards / DEFAULT_ITEMS_PER_PAGE)}
                   // Giá trị của page hiện tại đang đứng
-                  page={page}
+                  page={page} // chỉ dùng để cho biết hiệu ứng focus cần focus vào page có số nào
                   // Render các page item và đồng thời cũng là những cái link để chúng ta click chuyển trang
                   renderItem={(item) => (
                     <PaginationItem
@@ -183,6 +184,7 @@ function Boards() {
                       {...item}
                     />
                   )}
+                  // Giả sử bạn đang ở trang thứ 2, item có thể có cấu trúc như sau: { page: 2, type: "page", selected: true,... }
                 />
               </Box>
             }

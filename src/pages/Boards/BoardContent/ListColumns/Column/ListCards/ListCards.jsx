@@ -11,7 +11,7 @@ function ListCards({ cards }) {
         display: 'flex',
         flexDirection: 'column',
         gap: 1,
-        overflowX: 'hidden',
+        // overflowX: 'hidden',
         overflowY: 'auto',
         maxHeight: (theme) =>
           `calc(
@@ -20,7 +20,7 @@ function ListCards({ cards }) {
             - ${theme.trello.columnHeaderHeight}
             - ${theme.trello.columnFooterHeight}
           )`,
-        '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da', borderRadius: '8px' },
+        '&::-webkit-scrollbar-thumb': { backgroundColor: '#ced0da' },
         '&::-webkit-scrollbar-thumb:hover': { backgroundColor: '#bfc2cf' }
       }}>
         {cards?.map(card => <Card key={card._id} card={card}/>)}

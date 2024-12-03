@@ -18,7 +18,12 @@ function Card({ card }) {
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card._id,
-    data: { ...card }
+    data: { ...card },
+    disabled : false,
+    transition: {
+      duration: 500, // milliseconds
+      easing: 'cubic-bezier(0.25, 1, 0.5, 1)'
+    }
   })
 
   const dndKitCardStyles = {
@@ -75,7 +80,6 @@ function Card({ card }) {
             <Button startIcon={<AttachmentIcon />} size="small">{card.attachments.length}</Button>}
         </CardActions>
       }
-
     </MuiCard>
   )
 }
