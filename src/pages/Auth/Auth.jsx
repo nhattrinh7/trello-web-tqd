@@ -2,6 +2,7 @@ import { useLocation, Navigate } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import LoginForm from './LoginForm'
 import RegisterForm from './RegisterForm'
+import ForgetPasswordForm from './ForgetPasswordForm'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 
@@ -11,6 +12,7 @@ function Auth() {
   // console.log(location)
   const isLogin = location.pathname === '/login'
   const isRegister = location.pathname === '/register'
+  const isForgetPassword = location.pathname === '/forget_password'
 
   // có currentUser được persist trong localstorage thì phải ở trong, ko dc tự sửa URL ra ngoài trang login
   const currentUser = useSelector(selectCurrentUser)
@@ -33,6 +35,7 @@ function Auth() {
     }}>
       {isLogin && <LoginForm />}
       {isRegister && <RegisterForm />}
+      {isForgetPassword && <ForgetPasswordForm />}
     </Box>
   )
 }

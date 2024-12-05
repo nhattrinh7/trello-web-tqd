@@ -33,11 +33,12 @@ function LoginForm() {
   let [searchParams] = useSearchParams()
   const registeredEmail = searchParams.get('registeredEmail')
   const verifiedEmail = searchParams.get('verifiedEmail')
+  const resetedEmail = searchParams.get('resetedEmail')
+  const changedPasswordEmail = searchParams.get('changed_passwordEmail')
 
 
   const submitLogIn = (data) => {
     const { email, password } = data
-
     toast.promise(dispatch(loginUserAPI({ email, password })), { pending: 'Logging in...' }
     ).then(res => {
       // Đoạn này phải kiểm tra không có lỗi (login thành công) thì mới redirect về route /
@@ -76,6 +77,20 @@ function LoginForm() {
                 <br />Please check and verify your account before logging in!
               </Alert>
             }
+            {resetedEmail &&
+              <Alert severity="success" sx={{ '.MuiAlert-message': { overflow: 'hidden' } }}>
+                Email has been seen to&nbsp;
+                <Typography variant="span" sx={{ fontWeight: 'bold', '&:hover': { color: '#fdba26' } }}>{resetedEmail}</Typography>
+                &nbsp;.<br />Please click the link in your mailbox to reset your password!
+              </Alert>
+            }
+            {changedPasswordEmail &&
+              <Alert severity="success" sx={{ '.MuiAlert-message': { overflow: 'hidden' } }}>
+                Password was changed successfully!&nbsp;
+                {/* <Typography variant="span" sx={{ fontWeight: 'bold', '&:hover': { color: '#fdba26' } }}>{resetedEmail}</Typography> */}
+                &nbsp;.<br />Login and enjoy our services!
+              </Alert>
+            }
           </Box>
           <Box sx={{ padding: '0 1em 1em 1em' }}>
             <Box sx={{ marginTop: '1em' }}>
@@ -83,7 +98,7 @@ function LoginForm() {
                 // autoComplete="nope"
                 autoFocus
                 fullWidth
-                label="Enter Email..."
+                label="Enter your email..."
                 type="text"
                 variant="outlined"
                 error={!!errors['email']}
@@ -127,11 +142,19 @@ function LoginForm() {
               Login
             </Button>
           </CardActions>
-          <Box sx={{ padding: '0 1em 1em 1em', textAlign: 'center' }}>
-            <Typography>New to Trello MERN Stack Advanced?</Typography>
-            <Link to="/register" style={{ textDecoration: 'none' }}>
-              <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>Create account!</Typography>
-            </Link>
+          <Box sx={{ padding: '0 1em 1em 1em', textAlign: 'center', display: 'flex', justifyContent: 'space-around' }}>
+            <Box>
+              {/* <Typography>New to Trello?</Typography> */}
+              <Link to="/register" style={{ textDecoration: 'none' }}>
+                <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>Create account!</Typography>
+              </Link>
+            </Box>
+            <Box>
+              {/* <Typography>Forgot passwork?</Typography> */}
+              <Link to="/forget_password" style={{ textDecoration: 'none' }}>
+                <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>Can not login?</Typography>
+              </Link>
+            </Box>
           </Box>
         </MuiCard>
       </Zoom>

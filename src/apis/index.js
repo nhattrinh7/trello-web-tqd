@@ -53,9 +53,23 @@ export const deleteCardAPI = async (cardId) => {
 }
 
 /** User */
+export const forrgetPasswordUserAPI = async (data) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/forget_password`, data)
+  toast.success('Email has been send successfully! Please check the link in your mailbox!',
+    { theme: 'colored' })
+  return response.data
+}
+
+export const createNewPasswordUserAPI = async (data) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/create_new_password`, data)
+  toast.success('Password is changed successfully! Login to enjoy our services!',
+    { theme: 'colored' })
+  return response.data
+}
+
 export const registerUserAPI = async (data) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/users/register`, data)
-  toast.success('Account created successfully! Please check and verify your your account before logging in!',
+  toast.success('Account created successfully! Please check and verify your account before logging in!',
     { theme: 'colored' })
   return response.data
 }
