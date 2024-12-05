@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import Settings from './pages/Settings/Settings'
 import Boards from './pages/Boards'
+import CreateNewPasswordForm from './pages/Auth/CreateNewPasswordForm'
+import HomePage from './HomePage'
 
 
 const ProtectedRoute = ({ user }) => {
@@ -19,9 +21,10 @@ function App() {
 
   return (
     <Routes>
-      <Route path='/' element={
+      {/* <Route path='/' element={
         <Navigate to='/boards' replace={true} /> // replace = true sẽ BỎ QUA / khi nhấn quay lại
-      }/>
+      }/> */}
+      <Route path='/' element={<HomePage />} />
 
       {/* Đã đăng nhập rồi thì mới được đi vào các Route bên trong, ko thì đẩy ra login */}
       <Route element={<ProtectedRoute user={currentUser}/>}>
@@ -38,6 +41,8 @@ function App() {
       <Route path='/login' element={<Auth />}/>
       <Route path='/register' element={<Auth />}/>
       <Route path='/account/verification' element={<AccountVerification />}/>
+      <Route path='/forget_password' element={<Auth />}/>
+      <Route path='/account/reset' element={<CreateNewPasswordForm />}/>
 
       {/* 404 - Not found */}
       <Route path='*' element={<NotFound />}/>

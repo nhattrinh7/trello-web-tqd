@@ -21,6 +21,7 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { registerUserAPI } from '~/apis'
 import { toast } from 'react-toastify'
 
+
 function RegisterForm() {
   const { register, handleSubmit, formState: { errors }, watch } = useForm()
   const navigate = useNavigate()
