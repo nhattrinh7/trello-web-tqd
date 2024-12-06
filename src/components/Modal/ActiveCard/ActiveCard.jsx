@@ -123,11 +123,8 @@ function ActiveCard() {
       description: 'Delete this Card forever?'
     })
       .then(() => {
-        // const newBoard = { ...board }
         const newBoard = cloneDeep(board)
         const targetColumn = newBoard.columns.filter(column => column._id === activeCard.columnId)
-        // console.log('activeCard', activeCard)
-        // console.log('targetColumn', targetColumn)
         const column = targetColumn[0]
         // console.log('column before', column)
         column.cards = column.cards.filter(card => card._id !== activeCard._id)

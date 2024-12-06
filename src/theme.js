@@ -16,7 +16,7 @@ const theme = createTheme({
     columnFooterHeight: COLUMN_FOOTER_HEIGHT
   },
   colorSchemes: {
-    dark: true
+    dark: 'true'
   },
   components: {
     MuiCssBaseline: {

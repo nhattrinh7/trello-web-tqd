@@ -152,7 +152,7 @@ function LoginForm() {
             <Box>
               {/* <Typography>Forgot passwork?</Typography> */}
               <Link to="/forget_password" style={{ textDecoration: 'none' }}>
-                <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>Can not login?</Typography>
+                <Typography sx={{ color: 'primary.main', '&:hover': { color: '#ffbb39' } }}>Forget password?</Typography>
               </Link>
             </Box>
           </Box>
