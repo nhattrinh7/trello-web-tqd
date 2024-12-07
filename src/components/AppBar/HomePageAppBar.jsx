@@ -41,10 +41,10 @@ function HomePageAppBar() {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         <Link to="/login" style={{ textDecoration: 'none' }}>
-          <Typography sx={{ color: '78B3CE', fontWeight: 500, '&:hover': { color: '#B1F0F7' } }}>Login</Typography>
+          <Typography sx={{ color: '78B3CE', fontWeight: 500, '&:hover': { color: '#9B7EBD' } }}>Login</Typography>
         </Link>
         <Link to="/register" style={{ textDecoration: 'none' }}>
-          <Typography sx={{ color: '78B3CE', fontWeight: 500, '&:hover': { color: '#B1F0F7' } }}>Signup</Typography>
+          <Typography sx={{ color: '78B3CE', fontWeight: 500, '&:hover': { color: '#9B7EBD' } }}>Signup</Typography>
         </Link>
 
         {/* Chỉnh dark - light mode */}
