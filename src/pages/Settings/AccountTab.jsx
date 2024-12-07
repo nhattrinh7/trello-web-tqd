@@ -50,7 +50,6 @@ function AccountTab() {
       toast.error(error)
       return
     }
-
     // Sử dụng FormData để xử lý dữ liệu liên quan tới file khi gọi API
     let reqData = new FormData()
     reqData.append('avatar', e.target?.files[0])

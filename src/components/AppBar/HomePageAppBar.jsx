@@ -48,7 +48,7 @@ function HomePageAppBar() {
         </Link>
 
         {/* Chỉnh dark - light mode */}
-        <ModeSelect />
+        <ModeSelect color={'purple'} textColor={'purple'}/>
       </Box>
 
     </Box>
