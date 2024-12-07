@@ -92,7 +92,8 @@ function AppBar() {
         <AutoCompleteSearchBoard />
 
         {/* Chỉnh dark - light mode */}
-        <ModeSelect />
+        {/* #FF8000 */}
+        <ModeSelect color={'white'} textColor={'#FF8000'}/>
 
         {/* Thông báo */}
         <Notifications />

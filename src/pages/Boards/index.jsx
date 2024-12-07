@@ -13,6 +13,8 @@ import HomeIcon from '@mui/icons-material/Home'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import Menu from '@mui/material/Menu'
+import MenuItem from '@mui/material/MenuItem'
 // import CardMedia from '@mui/material/CardMedia'
 import Pagination from '@mui/material/Pagination'
 import PaginationItem from '@mui/material/PaginationItem'
@@ -24,6 +26,7 @@ import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
 
 
 import { styled } from '@mui/material/styles'
+import { Button } from '@mui/material'
 // Styles của mấy cái Sidebar item menu, anh gom lại ra đây cho gọn.
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -83,6 +86,23 @@ function Boards() {
     fetchBoardsAPI(location.search).then(updateStateBoardData)
   }
 
+  const [anchorEl, setAnchorEl] = useState(null)
+  const open = Boolean(anchorEl)
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const handleDeleteBoard = () => {
+    handleClose()
+  }
+
+  const handleEditBoardDescription = () => {
+    handleClose()
+  }
+
   // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
   if (!boards) {
     return <PageLoadingSpinner caption="Loading Boards..." />
@@ -127,7 +147,7 @@ function Boards() {
               <Grid container spacing={2}>
                 {boards.map(b =>
                   <Grid xs={2} sm={3} md={4} key={b._id}>
-                    <Card sx={{ width: '250px' }}>
+                    <Card sx={{ width: '270px' }}>
                       {/* Ý tưởng mở rộng về sau làm ảnh Cover cho board nhé */}
                       {/* <CardMedia component="img" height="100" image="https://picsum.photos/100" /> */}
                       <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
@@ -143,17 +163,46 @@ function Boards() {
                           {b?.description}
                         </Typography>
                         <Box
-                          component={Link}
-                          to={`/boards/${b._id}`}
                           sx={{
-                            mt: 1,
                             display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'flex-end',
-                            color: 'primary.main',
-                            '&:hover': { color: 'primary.light' }
+                            justifyContent: 'space-between'
                           }}>
-                          Go to board <ArrowRightIcon fontSize="small" />
+                          <Box sx={{ marginLeft: '-8px' }}>
+                            <Button
+                              id="basic-button"
+                              aria-controls={open ? 'basic-menu' : undefined}
+                              aria-haspopup="true"
+                              aria-expanded={open ? 'true' : undefined}
+                              onClick={handleClick}
+                            >
+                              Manage board
+                            </Button>
+                            <Menu
+                              id="basic-menu"
+                              anchorEl={anchorEl}
+                              open={open}
+                              onClose={handleClose}
+                              MenuListProps={{
+                                'aria-labelledby': 'basic-button'
+                              }}
+                            >
+                              <MenuItem onClick={handleEditBoardDescription}>Edit board description</MenuItem>
+                              <MenuItem onClick={handleDeleteBoard}>Delete board</MenuItem>
+                            </Menu>
+                          </Box>
+                          <Button
+                            component={Link}
+                            to={`/boards/${b._id}`}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'flex-end',
+                              color: 'primary.main',
+                              '&:hover': { color: 'primary.light' },
+                              textDecoration: 'none'
+                            }}>
+                            Go to board <ArrowRightIcon fontSize="small" />
+                          </Button>
                         </Box>
                       </CardContent>
                     </Card>
