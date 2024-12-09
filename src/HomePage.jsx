@@ -6,6 +6,14 @@ import Grid from '@mui/material/Grid2'
 import Carousel from './components/AppBar/Carousel/Carousel'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
+import Divider from '@mui/material/Divider'
+import FacebookIcon from '@mui/icons-material/Facebook'
+import InstagramIcon from '@mui/icons-material/Instagram'
+import LinkedInIcon from '@mui/icons-material/LinkedIn'
+import XIcon from '@mui/icons-material/X'
+import YouTubeIcon from '@mui/icons-material/YouTube'
+import SvgIcon from '@mui/material/SvgIcon'
+import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 
 
 function HomePage () {
@@ -54,7 +62,7 @@ function HomePage () {
           </Grid>
         </Box>
 
-        <Box sx={{ marginTop: '40px', marginLeft: { xs: '5%', lg: '20%' } }}>
+        <Box sx={{ marginTop: '40px', marginLeft: { xs: '5%', sm: '15%', lg: '20%' } }}>
           <Box>
             <Typography sx={{ fontFamily: 'Josefin Sans', color: '#091e42', fontSize: '35px' }}>Đỉnh cao năng xuất</Typography>
             <Typography sx={{
@@ -70,12 +78,18 @@ function HomePage () {
         <Box
           sx={{
             display: 'flex',
+            flexDirection: { xs: 'column', lg: 'row' },
             marginTop: '35px',
-            gap: 5
+            gap: 3
           }}
           style={{ background: 'linear-gradient(180deg, rgb(212, 246, 255), rgb(198, 231, 255)' }}
         >
-          <Box sx={{ marginTop: '40px', marginLeft: { xs: '5%', lg: '20%' }, maxWidth: '400px' }}>
+          <Box sx={{
+            marginTop: '40px',
+            marginLeft: { xs: '10%', sm: '15%', lg: '20%' },
+            marginRight: { xs: '10%', sm: '15%', lg: '2%' },
+            minWidth: { xs: '250px', sm: '300px', lg: '400px' }
+          }}>
             <Card sx={{ marginBottom: '20px' }}>
               <CardContent>
                 <Typography><b>Các bảng</b></Typography>
@@ -96,8 +110,156 @@ function HomePage () {
             </Card>
           </Box>
           {/* Carousel */}
-          <Box sx={{ minWidth: '300px', marginTop: '80px' }}>
+          <Box sx={{
+            minWidth: { xs: '600px', sm: '700px', lg: '1000px' },
+            marginTop: { xs: '20px', sm: '20px', lg: '80px' },
+            marginLeft: { xs: '8%', sm: '23%', lg: '2%' }
+          }}>
             <Carousel/>
+          </Box>
+        </Box>
+
+        {/* Thống kê */}
+        <Box
+          sx={{
+            // borderRadius: '5px',
+            marginY: '50px',
+            boxShadow: '3px 3px 0px 0px rgba(0, 0, 0, 0.4)',
+            marginX: { xs: '5%', sm: '10%', md: '12%', lg: '20%' },
+            width: { xs: '90%', sm: '80%', md: '75%', lg: '60%' },
+            display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' }
+          }}
+        >
+          <Box sx={{
+            paddingRight: '40px',
+            width: { md: '2900', lg: '3100px' },
+            height: '400px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: { md: 'space-between' },
+            wordSpacing: '4px'
+          }}>
+            <Typography
+              fontSize='24px'
+              lineHeight='36px'
+              sx={{
+                color: '#373737',
+                marginBottom: { xs: '15px' }
+              }}
+            >
+              [Trello] lý tưởng cho việc đơn giản hóa các quy trình. Là người quản lí, tôi có thể chia quy trình
+              thành từng phần nhỏ cho nhóm rồi phân công công việc những vẫn có thể quan sát toàn bộ quy trình
+            </Typography>
+            <Box>
+              <Divider sx={{ backgroundColor: 'black', width: '150px', marginBottom: { xs: '15px' } }}/>
+              <Typography sx={{ color: '#373737', fontFamily: 'Josefin Sans' }}>Joey Rosenberg</Typography>
+              <Typography sx={{ color: '#373737', fontFamily: 'Josefin Sans', marginBottom: { xs: '5px', md: '10px' } }}>Giám đốc lãnh đạo toàn cầu tại Women Who Code</Typography>
+              <Box
+                component='img'
+                src='https://cdn.shopify.com/s/files/1/1649/1031/files/FullLogo-Black_1.png?height=628&pad_color=fff&v=1658931443&width=1200'
+                alt='image-women-who-code'
+                width='80px'
+                sx={{ display: { xs: 'none', sm: 'block' } }}
+              />
+            </Box>
+          </Box>
+          <Box
+
+          >
+            <Box
+              style={{ background: 'linear-gradient(60deg, rgb(101, 84, 192), rgb(249, 156, 219))' }}
+              sx={{
+                padding: '40px 37px',
+                height: { xs: '310px', sm: '230px', md: '400px' },
+                marginTop: { xs: '-75px', md: '0' }
+              }}
+            >
+              <Typography
+                // variant='h3'
+                fontSize='33px'
+                sx={{
+                  color: 'white',
+                  fontFamily: 'Barlow',
+                  fontWeight: 600
+                }}
+              >
+                75% các tổ chức báo cáo rằng Trello mang lại giá trị cho doanh nghiệp của họ trong vòng 30 ngày
+              </Typography>
+            </Box>
+          </Box>
+        </Box>
+        {/* Footer */}
+        <Box
+          sx={{
+            backgroundColor: 'rgb(23, 43, 77)'
+          }}
+        >
+          <Box sx={{
+            maxWidth: '1400px',
+            marginLeft: { lg: '240px' },
+            color: '#F3EEEA',
+            display: 'flex',
+            // gap: 20,
+            justifyContent: 'space-around',
+            paddingTop: '25px'
+          }}>
+            <Box sx={{ maxWidth: '220px', display: 'flex', flexDirection: 'column' }}>
+              <Typography>ATLASSIAN</Typography>
+              <Box sx={{ display: 'flex' }}>
+                <SvgIcon component={TrelloIcon} fontSize='large' inheritViewBox/>
+                <Typography variant='h4'>Trello</Typography>
+              </Box>
+            </Box>
+            <Box sx={{ maxWidth: '220px' }}>
+              <Typography>Tìm hiểu về Trello</Typography>
+              <Typography variant='caption'>Công nghệ nền tảng</Typography>
+            </Box>
+            <Box sx={{ maxWidth: '220px' }}>
+              <Typography>Việc làm</Typography>
+              <Typography variant='caption'>Tìm hiểu về các vai trò chưa ai đảm nhiệm trong nhóm Trello.</Typography>
+            </Box>
+            <Box sx={{ maxWidth: '220px' }}>
+              <Typography>Ứng dụng</Typography>
+              <Typography variant='caption'>Tải xuống Ứng dụng Trello cho Máy tính hoặc Thiết bị di động.</Typography>
+            </Box>
+            <Box sx={{ maxWidth: '220px' }}>
+              <Typography>Liên hệ với chúng tôi</Typography>
+              <Typography variant='caption'>Bạn cần giúp đỡ? Hãy liên hệ để chúng tôi trợ giúp.</Typography>
+            </Box>
+          </Box>
+          <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '25px' }}/>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-around'
+            }}
+          >
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                color: 'white',
+                marginBottom: '20px'
+              }}
+            >
+              <Typography variant='caption'>Chính sách riêng tư</Typography>
+              <Typography variant='caption'>Thuật ngữ</Typography>
+              <Typography variant='caption'>Bản quyền 2024</Typography>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 2,
+                color: 'white'
+              }}
+            >
+              <FacebookIcon />
+              <InstagramIcon />
+              <LinkedInIcon />
+              <XIcon />
+              <YouTubeIcon />
+            </Box>
           </Box>
         </Box>
       </Container>
