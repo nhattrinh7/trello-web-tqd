@@ -21,8 +21,9 @@ import PaginationItem from '@mui/material/PaginationItem'
 import { Link, useLocation } from 'react-router-dom'
 import randomColor from 'randomcolor'
 import SidebarCreateBoardModal from './create'
-import { fetchBoardsAPI } from '~/apis'
+import { fetchBoardsAPI, deleteBoardAPI } from '~/apis'
 import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
+import { toast } from 'react-toastify'
 
 
 import { styled } from '@mui/material/styles'
@@ -95,7 +96,15 @@ function Boards() {
     setAnchorEl(null)
   }
 
-  const handleDeleteBoard = () => {
+  const handleDeleteBoard = (boardId) => {
+    toast.promise( // upload file hơi lâu nên dùng Promise để hiển thị loading thôi mà
+      deleteBoardAPI(boardId),
+      {
+        pending: 'Updating...',
+        success: 'Deleted board succesfully!'
+      }
+    )
+    deleteBoardAPI(boardId)
     handleClose()
   }
 
