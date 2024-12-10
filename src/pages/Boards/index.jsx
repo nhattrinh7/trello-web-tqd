@@ -21,9 +21,16 @@ import PaginationItem from '@mui/material/PaginationItem'
 import { Link, useLocation } from 'react-router-dom'
 import randomColor from 'randomcolor'
 import SidebarCreateBoardModal from './create'
-import { fetchBoardsAPI, deleteBoardAPI } from '~/apis'
+import { fetchBoardsAPI, deleteBoardAPI, updateBoardDetailsAPI } from '~/apis'
 import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
 import { toast } from 'react-toastify'
+import { useConfirm } from 'material-ui-confirm'
+import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
+import { cloneDeep } from 'lodash'
+import { useDispatch } from 'react-redux'
+import {
+  updateCurrentActiveBoard
+} from '~/redux/activeBoard/activeBoardSlice'
 
 
 import { styled } from '@mui/material/styles'
@@ -47,6 +54,7 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 }))
 
 function Boards() {
+  const dispatch = useDispatch()
   // MẢNG các bản ghi boards hiển thị tối đa trên 1 page tùy dự án (thường sẽ là 12 cái)
   const [boards, setBoards] = useState(null)
   // Tổng toàn bộ số lượng bản ghi boards có trong Database mà phía BE trả về để FE dùng tính toán phân trang
@@ -96,20 +104,35 @@ function Boards() {
     setAnchorEl(null)
   }
 
+  const confirmDeleteBoard = useConfirm()
   const handleDeleteBoard = (boardId) => {
-    toast.promise( // upload file hơi lâu nên dùng Promise để hiển thị loading thôi mà
-      deleteBoardAPI(boardId),
-      {
-        pending: 'Updating...',
-        success: 'Deleted board succesfully!'
-      }
-    )
-    deleteBoardAPI(boardId)
-    handleClose()
+    confirmDeleteBoard({
+      title: 'Delete Board?',
+      description: 'Delete this Board?'
+    })
+      .then(() => {
+        const newBoards = boards.filter(board => board._id !== boardId)
+        setBoards(newBoards)
+
+        // gọi API
+        deleteBoardAPI(boardId)
+          .then(res => {toast.success(res?.deleteResult)})
+      })
+      .catch(() => {})
   }
 
   const handleEditBoardDescription = () => {
     handleClose()
+  }
+
+  const onUpdateBoardTitle = (newTitle, board) => {
+    // gọi API update Board và xử lí dữ liệu trong redux- taisaonhi
+    updateBoardDetailsAPI(board._id, { title: newTitle }).then(() => {
+      const newBoard = cloneDeep(board)
+      newBoard.title = newTitle
+
+      dispatch(updateCurrentActiveBoard(newBoard))
+    })
   }
 
   // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
@@ -162,9 +185,12 @@ function Boards() {
                       <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
 
                       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-                        <Typography gutterBottom variant="h6" component="div">
-                          {b?.title}
-                        </Typography>
+                        <ToggleFocusInput
+                          value={b?.title}
+                          onChangedValue={onUpdateBoardTitle}
+                          data-no-dnd="true"
+                          board={b}
+                        />
                         <Typography
                           variant="body2"
                           color="text.secondary"
@@ -196,7 +222,7 @@ function Boards() {
                               }}
                             >
                               <MenuItem onClick={handleEditBoardDescription}>Edit board description</MenuItem>
-                              <MenuItem onClick={handleDeleteBoard}>Delete board</MenuItem>
+                              <MenuItem onClick={() => handleDeleteBoard(b._id)}>Delete board</MenuItem>
                             </Menu>
                           </Box>
                           <Button
