@@ -5,6 +5,7 @@ import MenuItem from '@mui/material/MenuItem'
 import LightModeIcon from '@mui/icons-material/LightMode'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
 import SettingsBrightnessIcon from '@mui/icons-material/SettingsBrightness'
+import './styles.css'
 
 function ModeSelect({ color, textColor }) {
   const { mode, setMode } = useColorScheme()
@@ -13,9 +14,9 @@ function ModeSelect({ color, textColor }) {
   }
   return (
     <Box>
-      <Select sx={{
+      <Select className={textColor == 'black' ? 'white' : 'other'} sx={{
         height: '38px',
-        color: 'white',
+        color: 'white !important',
         border: `1px solid ${color}`,
         '&:hover .MuiOutlinedInput-notchedOutline': {
           borderColor: color

@@ -74,6 +74,7 @@ function HomePage () {
               Đơn giản, linh hoạt và mạnh mẽ. Chỉ với bảng, danh sách và thẻ, bạn sẽ biết rõ ai đang làm gì và những việc cần làm. Tìm hiểu thêm trong hướng dẫn bắt đầu của chúng tôi.</Typography>
           </Box>
         </Box>
+
         {/* Homepage Carousel */}
         <Box
           sx={{
@@ -197,11 +198,13 @@ function HomePage () {
         >
           <Box sx={{
             maxWidth: '1400px',
-            marginLeft: { lg: '240px' },
-            color: '#F3EEEA',
+            marginLeft: { xs: '30px', lg: '240px' },
+            color: 'white',
             display: 'flex',
-            // gap: 20,
+            flexDirection: { xs: 'column', md: 'row' },
             justifyContent: 'space-around',
+            gap: 3,
+            // alignItems: 'center',
             paddingTop: '25px'
           }}>
             <Box sx={{ maxWidth: '220px', display: 'flex', flexDirection: 'column' }}>
@@ -211,28 +214,36 @@ function HomePage () {
                 <Typography variant='h4'>Trello</Typography>
               </Box>
             </Box>
-            <Box sx={{ maxWidth: '220px' }}>
+            <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '-8px', display: { xs: 'block', md: 'none' }, marginRight: '30px' }}/>
+            <Box sx={{ maxWidth: { xs: '400px', lg: '220px' } }}>
               <Typography>Tìm hiểu về Trello</Typography>
               <Typography variant='caption'>Công nghệ nền tảng</Typography>
             </Box>
-            <Box sx={{ maxWidth: '220px' }}>
+            <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '-8px', display: { xs: 'block', md: 'none' }, marginRight: '30px' }}/>
+            <Box sx={{ maxWidth: { xs: '400px', lg: '220px' } }}>
               <Typography>Việc làm</Typography>
               <Typography variant='caption'>Tìm hiểu về các vai trò chưa ai đảm nhiệm trong nhóm Trello.</Typography>
             </Box>
-            <Box sx={{ maxWidth: '220px' }}>
+            <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '-8px', display: { xs: 'block', md: 'none' }, marginRight: '30px' }}/>
+            <Box sx={{ maxWidth: { xs: '400px', lg: '220px' } }}>
               <Typography>Ứng dụng</Typography>
               <Typography variant='caption'>Tải xuống Ứng dụng Trello cho Máy tính hoặc Thiết bị di động.</Typography>
             </Box>
-            <Box sx={{ maxWidth: '220px' }}>
+            <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '-8px', display: { xs: 'block', md: 'none' }, marginRight: '30px' }}/>
+            <Box sx={{ maxWidth: { xs: '400px', lg: '220px' } }}>
               <Typography>Liên hệ với chúng tôi</Typography>
               <Typography variant='caption'>Bạn cần giúp đỡ? Hãy liên hệ để chúng tôi trợ giúp.</Typography>
             </Box>
+            <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '-8px', display: { xs: 'block', md: 'none' }, marginRight: '30px' }}/>
           </Box>
-          <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '25px' }}/>
+          <Divider sx={{ backgroundColor: '#F3EEEA', opacity: '0.5', marginY: '25px', display: { xs: 'none', md: 'block' } }}/>
           <Box
             sx={{
               display: 'flex',
-              justifyContent: 'space-around'
+              justifyContent: 'space-around',
+              marginTop: { xs: '30px', md: 0 },
+              marginLeft: { xs: '30px', lg: '240px' },
+              flexDirection: { xs: 'column', md: 'row' }
             }}
           >
             <Box
@@ -240,7 +251,8 @@ function HomePage () {
                 display: 'flex',
                 gap: 2,
                 color: 'white',
-                marginBottom: '20px'
+                marginBottom: '20px',
+                flexDirection: { xs: 'column', md: 'row' }
               }}
             >
               <Typography variant='caption'>Chính sách riêng tư</Typography>
@@ -250,8 +262,9 @@ function HomePage () {
             <Box
               sx={{
                 display: 'flex',
-                gap: 2,
-                color: 'white'
+                gap: { xs: 5, md: 2 },
+                color: 'white',
+                marginY: { xs: '80px', md: 0 }
               }}
             >
               <FacebookIcon />

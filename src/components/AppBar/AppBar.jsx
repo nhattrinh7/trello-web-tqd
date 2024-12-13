@@ -93,16 +93,10 @@ function AppBar() {
 
         {/* Chỉnh dark - light mode */}
         {/* #FF8000 */}
-        <ModeSelect color={'white'} textColor={'#FF8000'}/>
+        <ModeSelect color={'white'} textColor={'black'}/>
 
         {/* Thông báo */}
         <Notifications />
-
-        <Tooltip title='Help'>
-          <Badge color="secondary" variant="dot" sx={{ cursor: 'pointer' }}>
-            <HelpOutlineIcon sx={{ color: 'white' }}/>
-          </Badge>
-        </Tooltip>
 
         <Profiles />
       </Box>

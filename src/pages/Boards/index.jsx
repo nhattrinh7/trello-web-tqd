@@ -28,9 +28,8 @@ import { useConfirm } from 'material-ui-confirm'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import { cloneDeep } from 'lodash'
 import { useDispatch } from 'react-redux'
-import {
-  updateCurrentActiveBoard
-} from '~/redux/activeBoard/activeBoardSlice'
+import { updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import EditBoardDescriptionModal from '~/components/Form/EditBoardDescriptionModal'
 
 
 import { styled } from '@mui/material/styles'
@@ -90,20 +89,38 @@ function Boards() {
     fetchBoardsAPI(location.search).then(updateStateBoardData)
   }, [location.search])
 
+  const [anchorEl, setAnchorEl] = useState({})
+  const open = Boolean(anchorEl)
+  const handleClick = (boardId, event) => {
+    setAnchorEl((prev) => ({
+      ...prev,
+      [boardId]: event.currentTarget
+    }))
+  }
+  const handleClose = (boardId) => {
+    setAnchorEl((prev) => ({
+      ...prev,
+      [boardId]: null
+    }))
+  }
+
+  /**
+   * {
+   *  111: null
+   *  112: null
+   *  113: null
+   * }
+   * {
+   *  111: null
+   *  112: null
+   *  113: null
+   * }
+   */
+
   const afterCreateNewBoard = () => {
     // Đơn giản là fetch lại danh sách Board như trong useEffect
     fetchBoardsAPI(location.search).then(updateStateBoardData)
   }
-
-  const [anchorEl, setAnchorEl] = useState(null)
-  const open = Boolean(anchorEl)
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget)
-  }
-  const handleClose = () => {
-    setAnchorEl(null)
-  }
-
   const confirmDeleteBoard = useConfirm()
   const handleDeleteBoard = (boardId) => {
     confirmDeleteBoard({
@@ -121,16 +138,26 @@ function Boards() {
       .catch(() => {})
   }
 
-  const handleEditBoardDescription = () => {
-    handleClose()
+  // Manage board
+  const handleCloseMenu = (boardId) => {
+    handleClose(boardId)
   }
 
-  const onUpdateBoardTitle = (newTitle, board) => {
+  const handleUpdateBoardTitle = async (newTitle, board) => {
     // gọi API update Board và xử lí dữ liệu trong redux- taisaonhi
-    updateBoardDetailsAPI(board._id, { title: newTitle }).then(() => {
+    await updateBoardDetailsAPI(board._id, { title: newTitle }).then(() => {
       const newBoard = cloneDeep(board)
       newBoard.title = newTitle
 
+      dispatch(updateCurrentActiveBoard(newBoard))
+    })
+  }
+
+  const handleEditDescription = async (newDescription, board) => {
+    // gọi API update Board và xử lí dữ liệu trong redux
+    await updateBoardDetailsAPI(board._id, { description: newDescription }).then(() => {
+      const newBoard = cloneDeep(board)
+      newBoard.description = newDescription
       dispatch(updateCurrentActiveBoard(newBoard))
     })
   }
@@ -179,6 +206,7 @@ function Boards() {
               <Grid container spacing={2}>
                 {boards.map(b =>
                   <Grid xs={2} sm={3} md={4} key={b._id}>
+                    {/* {console.log(b._id)} */}
                     <Card sx={{ width: '270px' }}>
                       {/* Ý tưởng mở rộng về sau làm ảnh Cover cho board nhé */}
                       {/* <CardMedia component="img" height="100" image="https://picsum.photos/100" /> */}
@@ -187,7 +215,7 @@ function Boards() {
                       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
                         <ToggleFocusInput
                           value={b?.title}
-                          onChangedValue={onUpdateBoardTitle}
+                          onChangedValue={handleUpdateBoardTitle}
                           data-no-dnd="true"
                           board={b}
                         />
@@ -208,21 +236,29 @@ function Boards() {
                               aria-controls={open ? 'basic-menu' : undefined}
                               aria-haspopup="true"
                               aria-expanded={open ? 'true' : undefined}
-                              onClick={handleClick}
+                              onClick={(e) => handleClick(b._id, e)}
                             >
                               Manage board
                             </Button>
                             <Menu
                               id="basic-menu"
-                              anchorEl={anchorEl}
-                              open={open}
-                              onClose={handleClose}
+                              anchorEl={anchorEl[b._id]}
+                              open={Boolean(anchorEl[b._id])}
+                              onClose={() => handleClose(b._id)}
                               MenuListProps={{
                                 'aria-labelledby': 'basic-button'
                               }}
                             >
-                              <MenuItem onClick={handleEditBoardDescription}>Edit board description</MenuItem>
+                              <MenuItem >
+                                <EditBoardDescriptionModal
+                                  handleCloseMenu={handleCloseMenu}
+                                  afterCreateNewBoard={afterCreateNewBoard}
+                                  onEditDescription={handleEditDescription}
+                                  board={b}
+                                />
+                              </MenuItem>
                               <MenuItem onClick={() => handleDeleteBoard(b._id)}>Delete board</MenuItem>
+                              {/* <MenuItem onClick={() => {console.log(b.title)}}>Delete board</MenuItem> */}
                             </Menu>
                           </Box>
                           <Button

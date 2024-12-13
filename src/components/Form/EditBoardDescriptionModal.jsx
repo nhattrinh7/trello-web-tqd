@@ -2,20 +2,16 @@ import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Modal from '@mui/material/Modal'
 import Typography from '@mui/material/Typography'
-import LibraryAddIcon from '@mui/icons-material/LibraryAdd'
+import EditIcon from '@mui/icons-material/Edit'
 import CancelIcon from '@mui/icons-material/Cancel'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import TextField from '@mui/material/TextField'
 import InputAdornment from '@mui/material/InputAdornment'
 import { FIELD_REQUIRED_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
-import AbcIcon from '@mui/icons-material/Abc'
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined'
 import Button from '@mui/material/Button'
-import Radio from '@mui/material/Radio'
-import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import { createNewBoardAPI } from '~/apis'
+
 
 import { styled } from '@mui/material/styles'
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -23,11 +19,11 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   alignItems: 'center',
   gap: '8px',
   cursor: 'pointer',
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-  padding: '12px 16px',
-  borderRadius: '8px',
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : null,
+  // padding: '12px 16px',
+  // borderRadius: '8px',
   '&:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[300]
+    backgroundColor: theme.palette.mode === 'dark' ? '#33485D' : theme.palette.grey[100]
   },
   '&.active': {
     color: theme.palette.mode === 'dark' ? '#90caf9' : '#0c66e4',
@@ -35,18 +31,15 @@ const SidebarItem = styled(Box)(({ theme }) => ({
   }
 }))
 
-// BOARD_TYPES tương tự bên model phía Back-end (nếu cần dùng nhiều nơi thì hãy đưa ra file constants, không thì cứ để ở đây)
-const BOARD_TYPES = {
-  PUBLIC: 'public',
-  PRIVATE: 'private'
-}
 
 /**
  * Bản chất của cái component SidebarCreateBoardModal này chúng ta sẽ trả về một cái SidebarItem để hiển thị ở màn Board List cho phù hợp giao diện bên đó, đồng thời nó cũng chứa thêm một cái Modal để xử lý riêng form create board nhé.
  * Note: Modal là một low-component mà bọn MUI sử dụng bên trong những thứ như Dialog, Drawer, Menu, Popover. Ở đây dĩ nhiên chúng ta có thể sử dụng Dialog cũng không thành vấn đề gì, nhưng sẽ sử dụng Modal để dễ linh hoạt tùy biến giao diện từ con số 0 cho phù hợp với mọi nhu cầu nhé.
  */
-function SidebarCreateBoardModal({ afterCreateNewBoard }) {
-  const { control, register, handleSubmit, reset, formState: { errors } } = useForm()
+function SidebarCreateBoardModal({ handleCloseMenu, afterCreateNewBoard, onEditDescription, board }) {
+  // console.log(board)
+  // console.log(value)
+  const { register, handleSubmit, reset, formState: { errors } } = useForm()
 
   const [isOpen, setIsOpen] = useState(false)
   const handleOpenModal = () => setIsOpen(true)
@@ -54,21 +47,21 @@ function SidebarCreateBoardModal({ afterCreateNewBoard }) {
     setIsOpen(false)
     // Reset lại toàn bộ form khi đóng Modal
     reset()
+    handleCloseMenu(board._id)
   }
 
-  const submitCreateNewBoard = (data) => {
-    // const { title, description, type } = data
-    createNewBoardAPI(data).then(() => {
-      handleCloseModal() // đóng form Modal tạo mới Board lại
-      afterCreateNewBoard() // cập nhật lại UI sau khi tạo Board mới tại index.js
-    })
+
+  const submitCreateNewBoard = async (data) => {
+    const { description } = data
+    await onEditDescription(description, board)
+    afterCreateNewBoard() // cập nhật lại UI sau khi tạo Board mới tại index.js
+    handleCloseModal() // đóng form Modal và Menu lại
   }
 
   return (
     <>
       <SidebarItem onClick={handleOpenModal}>
-        <LibraryAddIcon fontSize="small" />
-        Create a new board
+        Edit board description
       </SidebarItem>
 
       <Modal
@@ -103,8 +96,8 @@ function SidebarCreateBoardModal({ afterCreateNewBoard }) {
               onClick={handleCloseModal} />
           </Box>
           <Box id="modal-modal-title" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <LibraryAddIcon />
-            <Typography variant="h6" component="h2"> Create a new board</Typography>
+            <EditIcon />
+            <Typography variant="h6" component="h2"> Edit board description</Typography>
           </Box>
           <Box id="modal-modal-description" sx={{ my: 2 }}>
             <form onSubmit={handleSubmit(submitCreateNewBoard)}>
@@ -112,31 +105,7 @@ function SidebarCreateBoardModal({ afterCreateNewBoard }) {
                 <Box>
                   <TextField
                     fullWidth
-                    label="Title"
-                    type="text"
-                    variant="outlined"
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <AbcIcon fontSize="small" />
-                          </InputAdornment>
-                        )
-                      }
-                    }}
-                    {...register('title', {
-                      required: FIELD_REQUIRED_MESSAGE,
-                      minLength: { value: 3, message: 'Min Length is 3 characters' },
-                      maxLength: { value: 50, message: 'Max Length is 50 characters' }
-                    })}
-                    error={!!errors['title']}
-                  />
-                  <FieldErrorAlert errors={errors} fieldName={'title'} />
-                </Box>
-
-                <Box>
-                  <TextField
-                    fullWidth
+                    // value={value}
                     label="Description"
                     type="text"
                     variant="outlined"
@@ -159,39 +128,6 @@ function SidebarCreateBoardModal({ afterCreateNewBoard }) {
                   />
                   <FieldErrorAlert errors={errors} fieldName={'description'} />
                 </Box>
-
-                {/*
-                  * Lưu ý đối với RadioGroup của MUI thì không thể dùng register tương tự TextField được mà phải sử dụng <Controller /> và props "control" của react-hook-form như cách làm dưới đây
-                  * https://stackoverflow.com/a/73336101
-                  * https://mui.com/material-ui/react-radio-button/
-                */}
-                <Controller
-                  name="type"
-                  defaultValue={BOARD_TYPES.PUBLIC}
-                  control={control}
-                  render={({ field }) => (
-                    <RadioGroup
-                      {...field}
-                      row
-                      onChange={(event, value) => field.onChange(value)}
-                      value={field.value}
-                    >
-                      <FormControlLabel
-                        value={BOARD_TYPES.PUBLIC}
-                        control={<Radio size="small" />}
-                        label="Public"
-                        labelPlacement="start"
-                      />
-                      <FormControlLabel
-                        value={BOARD_TYPES.PRIVATE}
-                        control={<Radio size="small" />}
-                        label="Private"
-                        labelPlacement="start"
-                      />
-                    </RadioGroup>
-                  )}
-                />
-
                 <Box sx={{ alignSelf: 'flex-end' }}>
                   <Button
                     className="interceptor-loading"
@@ -199,7 +135,7 @@ function SidebarCreateBoardModal({ afterCreateNewBoard }) {
                     variant="contained"
                     color="primary"
                   >
-                    Create
+                    Edit
                   </Button>
                 </Box>
               </Box>

@@ -10,6 +10,7 @@ import { toast } from 'react-toastify'
  */
 
 /** Board */
+
 // export const fetchBoardDetailsAPI = async (boardId) => {
 //   const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`) //get
 //   return response.data // Lưu ý: Axios trả kết quả về 1 property của nó là 'data'

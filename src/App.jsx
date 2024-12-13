@@ -16,6 +16,11 @@ const ProtectedRoute = ({ user }) => {
   return <Outlet />
 }
 
+const ProtectedRouteHomePage2 = ({ user }) => {
+  if (user) return <Navigate to='/boards' replace='true'/>
+  return <Outlet />
+}
+
 function App() {
   const currentUser = useSelector(selectCurrentUser)
 
@@ -24,7 +29,10 @@ function App() {
       {/* <Route path='/' element={
         <Navigate to='/boards' replace={true} /> // replace = true sẽ BỎ QUA / khi nhấn quay lại
       }/> */}
-      <Route path='/' element={<HomePage />} />
+
+      <Route element={<ProtectedRouteHomePage2 user={currentUser}/>}>
+        <Route path='/' element={<HomePage />} />
+      </Route>
 
       {/* Đã đăng nhập rồi thì mới được đi vào các Route bên trong, ko thì đẩy ra login */}
       <Route element={<ProtectedRoute user={currentUser}/>}>
@@ -36,6 +44,9 @@ function App() {
         <Route path='/settings/account' element={<Settings />} />
         <Route path='/settings/security' element={<Settings />} />
       </Route>
+
+      {/* Homepage */}
+      {/* <Route path='/' element={<HomePage />} /> */}
 
       {/* Authentication */}
       <Route path='/login' element={<Auth />}/>
