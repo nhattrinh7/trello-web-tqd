@@ -6,6 +6,9 @@ import { Tooltip } from '@mui/material'
 import { capitalizeFirstLetter } from '~/utils/formatters'
 import BoardUserGroup from './BoardUserGroup'
 import InviteBoardUser from './InviteBoardUser'
+import Appointment from './Appointment'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
 
 
 const MENU_STYLES = {
@@ -17,7 +20,10 @@ const MENU_STYLES = {
   }
 }
 
+
 function BoardBar({ board }) {
+  const currentUser = useSelector(selectCurrentUser)
+
   return (
     <Box sx={{
       width: '100%',
@@ -49,6 +55,9 @@ function BoardBar({ board }) {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+
+        {/* Phân quyền */}
+        {currentUser._id === board.defaultOwnerId ? <Appointment boardId={board._id}/> : null}
 
         {/* Mời user vào board */}
         <InviteBoardUser boardId={board._id} />
