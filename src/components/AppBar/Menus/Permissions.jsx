@@ -20,13 +20,16 @@ function Permission () {
         <Box>
           <Typography>Default Owner</Typography>
           <Box>
-            Default Owner has all permission in a board
-            Only Default Owner can specify each other person to 
+            Default Owner has all permission in a board<br />
+            Only Default Owner can specify people&apos; role
           </Box>
         </Box>
         <Box>
           <Typography>Owner</Typography>
-
+          <Box>
+            Default Owner has all permission in a board except specify others&apos;s role<br />
+            Only Default Owner can specify each other person to
+          </Box>
         </Box>
         <Box>
           <Typography>Member</Typography>

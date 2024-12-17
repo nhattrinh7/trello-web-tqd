@@ -10,6 +10,7 @@ import Appointment from './Appointment'
 import LeaveBoard from './LeaveBoard'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
+import Kick from './Kick'
 
 
 const MENU_STYLES = {
@@ -62,6 +63,9 @@ function BoardBar({ board }) {
 
         {/* Phân quyền */}
         {currentUser._id === board.defaultOwnerId && <Appointment boardId={board._id}/>}
+
+        {/* Kick user */}
+        {board.ownerIds.includes(currentUser._id) && <Kick board={board}/>}
 
         {/* Mời user vào board */}
         <InviteBoardUser boardId={board._id} />
