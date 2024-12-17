@@ -9,6 +9,7 @@ import Settings from './pages/Settings/Settings'
 import Boards from './pages/Boards'
 import CreateNewPasswordForm from './pages/Auth/CreateNewPasswordForm'
 import HomePage from './HomePage'
+import Permission from './components/AppBar/Menus/Permissions'
 
 
 const ProtectedRoute = ({ user }) => {
@@ -47,6 +48,8 @@ function App() {
 
       {/* Homepage */}
       {/* <Route path='/' element={<HomePage />} /> */}
+
+      <Route path='/permission' element={<Permission />}/>
 
       {/* Authentication */}
       <Route path='/login' element={<Auth />}/>

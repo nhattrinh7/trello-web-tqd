@@ -113,3 +113,9 @@ export const inviteUserToBoardAPI = async (data) => {
   toast.success('User invited to board successfully!')
   return response.data
 }
+
+// Lấy về thông tin của các user thuộc Board
+// export const getUsersInfoAPI = async (boardId) => {
+//   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards/${boardId}`)
+//   return response.data
+// }

@@ -6,6 +6,7 @@ import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
 import Typography from '@mui/material/Typography'
 import { Link } from 'react-router-dom'
+import Button from '@mui/material/Button'
 
 
 function HomePageAppBar() {
@@ -36,6 +37,14 @@ function HomePageAppBar() {
               Trello
             </Typography>
           </Box>
+        </Link>
+        <Link to='/permission' style={{ textDecoration: 'none' }}>
+          <Button sx={{
+            textDecoration: 'none',
+            color: 'purple'
+          }}>
+            Permission
+          </Button>
         </Link>
       </Box>
 
