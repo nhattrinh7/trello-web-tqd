@@ -1,4 +1,3 @@
-// import { useState } from 'react'
 import Box from '@mui/material/Box'
 import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
@@ -6,12 +5,10 @@ import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
 import Typography from '@mui/material/Typography'
 import Profiles from './Menus/Profiles'
-import Badge from '@mui/material/Badge'
-import Tooltip from '@mui/material/Tooltip'
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import { Link } from 'react-router-dom'
 import Notifications from './Notifications/Notifications'
 import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard'
+import Button from '@mui/material/Button'
 
 
 function AppBar() {
@@ -30,7 +27,7 @@ function AppBar() {
         bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : '#1565c0'),
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-      <Box sx={{ display: 'flex', alignItems: 'bottom', gap: 2 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <Link to="/boards">
           <AppsIcon sx={{ color: 'white' }}/>
         </Link>
@@ -43,7 +40,14 @@ function AppBar() {
             </Typography>
           </Box>
         </Link>
-
+        <Link to='/permission' style={{ textDecoration: 'none' }}>
+          <Button sx={{
+            textDecoration: 'none',
+            color: 'white'
+          }}>
+            Permission
+          </Button>
+        </Link>
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>

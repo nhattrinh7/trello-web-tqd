@@ -45,6 +45,9 @@ export const activeBoardSlice = createSlice({
           })
         }
       }
+    },
+    clearCurrentActiveBoard: (state) => {
+      state.currentActiveBoard = null
     }
   },
 
@@ -76,7 +79,7 @@ export const activeBoardSlice = createSlice({
 
 // Action dành cho các components bên dưới gọi dispatch() tới để cập nhật dữ liệu (chạy đồng bộ)
 // Action creators được tạo tự động theo tên reducers
-export const { updateCurrentActiveBoard, updateCardInBoard } = activeBoardSlice.actions
+export const { updateCurrentActiveBoard, updateCardInBoard, clearCurrentActiveBoard } = activeBoardSlice.actions
 
 // Selectors: dành cho các components bên dưới gọi bằng useSelector() để lấy dữ liệu từ trong kho redux store ra sử dụng
 export const selectCurrentActiveBoard = (state) => {

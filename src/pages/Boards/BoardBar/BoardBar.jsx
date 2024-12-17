@@ -7,6 +7,7 @@ import { capitalizeFirstLetter } from '~/utils/formatters'
 import BoardUserGroup from './BoardUserGroup'
 import InviteBoardUser from './InviteBoardUser'
 import Appointment from './Appointment'
+import LeaveBoard from './LeaveBoard'
 import { useSelector } from 'react-redux'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 
@@ -56,8 +57,11 @@ function BoardBar({ board }) {
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
 
+        {/* Rời board */}
+        <LeaveBoard board={board}/>
+
         {/* Phân quyền */}
-        {currentUser._id === board.defaultOwnerId ? <Appointment boardId={board._id}/> : null}
+        {currentUser._id === board.defaultOwnerId && <Appointment boardId={board._id}/>}
 
         {/* Mời user vào board */}
         <InviteBoardUser boardId={board._id} />
