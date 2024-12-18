@@ -67,6 +67,7 @@ function ActiveCard() {
   const activeCard = useSelector(selectCurrentActiveCard)
   const isShowModalActiveCard = useSelector(selectIsShowModalActiveCard)
   const currentUser = useSelector(selectCurrentUser)
+  const role = board.ownerIds.includes(currentUser._id) ? 'owner' : 'member'
 
   const handleCloseModal = () => {
     // setIsOpen(false)
@@ -190,15 +191,16 @@ function ActiveCard() {
         <Grid container spacing={4} sx={{ mb: 3 }}>
           {/* Left side */}
           <Grid size={{ xs: 12, sm: 10 }}>
-            <Box sx={{ mb: 3 }}>
-              <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
-
-              {/* Feature 02: Xử lý các thành viên của Card */}
-              <CardUserGroup
-                cardMemberIds={activeCard?.memberIds}
-                onUpdateCardMembers={onUpdateCardMembers}
-              />
-            </Box>
+            {role === 'owner' &&
+              <Box sx={{ mb: 3 }}>
+                <Typography sx={{ fontWeight: '600', color: 'primary.main', mb: 1 }}>Members</Typography>
+                {/* Feature 02: Xử lý các thành viên của Card */}
+                <CardUserGroup
+                  cardMemberIds={activeCard?.memberIds}
+                  onUpdateCardMembers={onUpdateCardMembers}
+                />
+              </Box>
+            }
 
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -264,19 +266,23 @@ function ActiveCard() {
               }
 
               {/* Feature 06: Xử lý hành động cập nhật ảnh Cover của Card */}
-              <SidebarItem className="active" component="label">
-                <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <ImageOutlinedIcon fontSize="small" />
-                    <span>Cover</span>
+              {role === 'owner' &&
+                <SidebarItem className="active" component="label">
+                  <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <ImageOutlinedIcon fontSize="small" />
+                      <span>Cover</span>
+                    </Box>
                   </Box>
-                </Box>
-                <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
-              </SidebarItem>
+                  <VisuallyHiddenInput type="file" onChange={onUploadCardCover} />
+                </SidebarItem>
+              }
 
-              <SidebarItem onClick={handleDeleteCard}>
-                <DeleteOutlineIcon fontSize="small" variant="outlined"/>Delete
-              </SidebarItem>
+              {role === 'owner' &&
+                <SidebarItem onClick={handleDeleteCard}>
+                  <DeleteOutlineIcon fontSize="small" variant="outlined"/>Delete
+                </SidebarItem>
+              }
             </Stack>
 
           </Grid>

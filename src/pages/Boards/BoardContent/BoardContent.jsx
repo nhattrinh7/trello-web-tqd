@@ -17,8 +17,7 @@ import Card from './ListColumns/Column/ListCards/Card/Card'
 import { cloneDeep, isEmpty } from 'lodash'
 import { generatePlaceholderCard } from '~/utils/formatters'
 import { MouseSensor, TouchSensor } from '~/customLibraries/DndKitSensors'
-import { useSelector } from 'react-redux'
-import { selectCurrentUser } from '~/redux/user/userSlice'
+
 
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -48,8 +47,6 @@ function BoardContent({
   // Điểm va chạm cuối cùng (trong xử lí thuật toán va chạm)
   const lastOverId = useRef(null)
 
-  const currentUser = useSelector(selectCurrentUser)
-  const isOwner = board.ownerIds.includes(currentUser._id) ? 'true' : 'false'
 
   useEffect(() => {
     setOrderedColumns(board.columns)
@@ -328,12 +325,12 @@ function BoardContent({
 
   return (
     <DndContext
-      onDragStart={isOwner ? handleDragStart : null}
-      onDragOver={isOwner ? handleDragOver : null}
-      onDragEnd={isOwner ? handleDragEnd : null}
-      // onDragStart={handleDragStart}
-      // onDragOver={handleDragOver}
-      // onDragEnd={handleDragEnd}
+      // onDragStart={isOwner ? handleDragStart : null}
+      // onDragOver={isOwner ? handleDragOver : null}
+      // onDragEnd={isOwner ? handleDragEnd : null}
+      onDragStart={handleDragStart}
+      onDragOver={handleDragOver}
+      onDragEnd={handleDragEnd}
       sensors={sensors}
       collisionDetection={collisionDetectionStrategy}
     >

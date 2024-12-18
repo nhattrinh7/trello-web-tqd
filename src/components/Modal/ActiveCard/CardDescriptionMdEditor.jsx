@@ -5,6 +5,9 @@ import rehypeSanitize from 'rehype-sanitize'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import EditNoteIcon from '@mui/icons-material/EditNote'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useSelector } from 'react-redux'
+import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 
 // const markdownValueExample = `
 //   *\`Markdown Content Example:\`*
@@ -26,6 +29,10 @@ function CardDescriptionMdEditor({ cardDescriptionProp, handleUpdateCardDescript
   // https://www.npmjs.com/package/@uiw/react-md-editor#support-dark-modenight-mode
   const { mode } = useColorScheme()
 
+  const board = useSelector(selectCurrentActiveBoard)
+  const currentUser = useSelector(selectCurrentUser)
+  const role = board.ownerIds.includes(currentUser._id) ? 'owner' : 'member'
+
   // State xử lý chế độ Edit và chế độ View
   const [markdownEditMode, setMarkdownEditMode] = useState(false)
   // State xử lý giá trị markdown khi chỉnh sửa
@@ -45,9 +52,9 @@ function CardDescriptionMdEditor({ cardDescriptionProp, handleUpdateCardDescript
             <MDEditor // chế độ edit
               value={cardDescription}
               onChange={setCardDescription}
-              previewOptions={{ rehypePlugins: [[rehypeSanitize]] }}
+              previewOptions={{ rehypePlugins: [[rehypeSanitize]] }} // hỗ trợ vấn đề an toàn
               height={400}
-              preview="edit" // Có 3 giá trị để set tùy nhu cầu ['edit', 'live', 'preview']
+              preview="preview" // Có 3 giá trị để set tùy nhu cầu ['edit', 'live', 'preview']
               // hideToolbar={true}
             />
           </Box>
@@ -63,16 +70,18 @@ function CardDescriptionMdEditor({ cardDescriptionProp, handleUpdateCardDescript
           </Button>
         </Box>
         : <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-          <Button
-            sx={{ alignSelf: 'flex-end' }}
-            onClick={() => setMarkdownEditMode(true)}
-            type="button"
-            variant="contained"
-            color="info"
-            size="small"
-            startIcon={<EditNoteIcon />}>
-            Edit
-          </Button>
+          {role === 'owner' &&
+            <Button
+              sx={{ alignSelf: 'flex-end' }}
+              onClick={() => setMarkdownEditMode(true)}
+              type="button"
+              variant="contained"
+              color="info"
+              size="small"
+              startIcon={<EditNoteIcon />}>
+              Edit
+            </Button>
+          }
           <Box data-color-mode={mode}>
             <MDEditor.Markdown // chế độ hiển thị cho người dùng nhìn
               source={cardDescription}

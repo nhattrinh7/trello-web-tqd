@@ -68,8 +68,8 @@ export const forrgetPasswordUserAPI = async (data) => {
 
 export const createNewPasswordUserAPI = async (data) => {
   const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/users/create_new_password`, data)
-  toast.success('Password is changed successfully! Login to enjoy our services!',
-    { theme: 'colored' })
+  // toast.success('Password is changed successfully! Login to enjoy our services!',
+  //   { theme: 'colored' })
   return response.data
 }
 

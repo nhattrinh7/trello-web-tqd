@@ -9,17 +9,23 @@ import CommentIcon from '@mui/icons-material/Comment'
 import AttachmentIcon from '@mui/icons-material/Attachment'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { updateCurrentActiveCard, showModalActiveCard } from '~/redux/activeCard/activeCardSlice'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+
 
 function Card({ card }) {
-
   const dispatch = useDispatch()
+  const board = useSelector(selectCurrentActiveBoard)
+
+  const currentUser = useSelector(selectCurrentUser)
+  const role = board.ownerIds.includes(currentUser._id) ? 'owner' : 'member'
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: card._id,
     data: { ...card },
-    disabled : false,
+    disabled: role === 'member' ? true : false,
     transition: {
       duration: 500, // milliseconds
       easing: 'cubic-bezier(0.25, 1, 0.5, 1)'

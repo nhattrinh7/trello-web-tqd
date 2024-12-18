@@ -19,6 +19,7 @@ import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { createNewPasswordUserAPI } from '~/apis'
 import { toast } from 'react-toastify'
 import { useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 
 function CreateNewPasswordForm() {
@@ -28,10 +29,17 @@ function CreateNewPasswordForm() {
   let [searchParams] = useSearchParams()
   const { email, token } = Object.fromEntries([...searchParams])
 
+  useEffect(() => {
+    const checkExpiredTokenMessage = 'checkExpiredToken'
+    const password = 'fakeTempPassword123'
+    createNewPasswordUserAPI({ password, email, token, checkExpiredTokenMessage })
+  })
+
   const submitCreateNewPassword = (data) => {
     const { password } = data
+    const createNewPasswordMessage = 'createNewPassword'
     toast.promise(
-      createNewPasswordUserAPI({ password, email, token }), { pending: 'New password is creating...' }
+      createNewPasswordUserAPI({ password, email, token, createNewPasswordMessage }), { pending: 'New password is creating...' }
     )
       .then(user => navigate(`/login?changed_passwordEmail=${user.email}`))
   }
