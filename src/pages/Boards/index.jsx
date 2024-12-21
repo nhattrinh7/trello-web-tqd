@@ -15,11 +15,9 @@ import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Menu from '@mui/material/Menu'
 import MenuItem from '@mui/material/MenuItem'
-// import CardMedia from '@mui/material/CardMedia'
 import Pagination from '@mui/material/Pagination'
 import PaginationItem from '@mui/material/PaginationItem'
 import { Link, useLocation } from 'react-router-dom'
-import randomColor from 'randomcolor'
 import SidebarCreateBoardModal from './create'
 import { fetchBoardsAPI, deleteBoardAPI, updateBoardDetailsAPI } from '~/apis'
 import { DEFAULT_PAGE, DEFAULT_ITEMS_PER_PAGE } from '~/utils/constants'
@@ -30,11 +28,12 @@ import { cloneDeep } from 'lodash'
 import { useDispatch } from 'react-redux'
 import { updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import EditBoardDescriptionModal from '~/components/Form/EditBoardDescriptionModal'
+import Popover from '@mui/material/Popover'
 
 
 import { styled } from '@mui/material/styles'
 import { Button } from '@mui/material'
-// Styles của mấy cái Sidebar item menu, anh gom lại ra đây cho gọn.
+// Styles của mấy cái Sidebar item menu, gom lại ra đây cho gọn.
 const SidebarItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
@@ -60,6 +59,7 @@ function Boards() {
   const [totalBoards, setTotalBoards] = useState(null)
 
   const location = useLocation()
+
   /**
    * Parse chuỗi string search trong location về đối tượng URLSearchParams trong JavaScript
    * https://developer.mozilla.org/en-US/docs/Web/API/URLSearchParams/URLSearchParams
@@ -75,6 +75,7 @@ function Boards() {
   // 2 thằng ở dưới dùng chung nên viết gom lại trên đây
   // hàm trong .then nên tự động nhận được res là kết quả trả về của việc gọi API
   const updateStateBoardData = (res) => {
+    console.log(res)
     setBoards(res.boards || [])
     setTotalBoards(res.totalBoards || 0)
   }
@@ -103,19 +104,6 @@ function Boards() {
       [boardId]: null
     }))
   }
-
-  /**
-   * {
-   *  111: null
-   *  112: null
-   *  113: null
-   * }
-   * {
-   *  111: null
-   *  112: null
-   *  113: null
-   * }
-   */
 
   const afterCreateNewBoard = () => {
     // Đơn giản là fetch lại danh sách Board như trong useEffect
@@ -161,6 +149,30 @@ function Boards() {
       dispatch(updateCurrentActiveBoard(newBoard))
     })
   }
+
+  // Khối cho cái thay đổi màu cho board
+  const [colorAnchorEl, setColorAnchorEl] = useState({})
+  const handleColorClick = (boardId, event) => {
+    setColorAnchorEl((prev) => ({
+      ...prev,
+      [boardId]: event.currentTarget
+    }))
+  }
+  const handleColorClose = (boardId) => {
+    setColorAnchorEl((prev) => ({
+      ...prev,
+      [boardId]: null
+    }))
+  }
+  const openColor = Boolean(colorAnchorEl)
+  const idColor = open ? 'simple-popover' : undefined
+
+  const updateBoardColor = async (newColor, board) => {
+    await updateBoardDetailsAPI(board._id, { color: newColor }).then(() => {
+      afterCreateNewBoard()
+    })
+  }
+
 
   // Lúc chưa tồn tại boards > đang chờ gọi api thì hiện loading
   if (!boards) {
@@ -208,9 +220,75 @@ function Boards() {
                   <Grid xs={2} sm={3} md={4} key={b._id}>
                     {/* {console.log(b._id)} */}
                     <Card sx={{ width: '270px' }}>
-                      {/* Ý tưởng mở rộng về sau làm ảnh Cover cho board nhé */}
-                      {/* <CardMedia component="img" height="100" image="https://picsum.photos/100" /> */}
-                      <Box sx={{ height: '50px', backgroundColor: randomColor() }}></Box>
+                      <Box sx={{ height: '50px', backgroundColor: b.color }} aria-describedby={idColor} onClick={(e) => handleColorClick(b._id, e)}></Box>
+                      <Popover
+                        id={idColor}
+                        open={Boolean(colorAnchorEl[b._id])}
+                        anchorEl={colorAnchorEl[b._id]}
+                        onClose={() => handleColorClose(b._id)}
+                        anchorOrigin={{
+                          vertical: 'top',
+                          horizontal: 'right'
+                        }}
+                      >
+                        <Box sx={{ p: 1, display: 'flex', flexDirection: 'column' }}>
+                          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #D44C47', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#D44C47' }}
+                              onClick={() => updateBoardColor('#D44C47', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #D9730D', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#D9730D' }}
+                              onClick={() => updateBoardColor('#D9730D', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #CB912F', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#CB912F' }}
+                              onClick={() => updateBoardColor('#CB912F', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #448361', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#448361' }}
+                              onClick={() => updateBoardColor('#448361', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #0079bf', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#0079bf' }}
+                              onClick={() => updateBoardColor('#0079bf', b)}
+                            >
+                              A</Typography>
+                          </Box>
+                          <Box sx={{ height: '6px' }}></Box>
+                          <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #9065B0', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#9065B0' }}
+                              onClick={() => updateBoardColor('#9065B0', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #C14C8A', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#C14C8A' }}
+                              onClick={() => updateBoardColor('#C14C8A', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #9F6B53', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#9F6B53' }}
+                              onClick={() => updateBoardColor('#9F6B53', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #787774', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#787774' }}
+                              onClick={() => updateBoardColor('#787774', b)}
+                            >
+                              A</Typography>
+                            <Typography
+                              sx={{ borderRadius: 1, paddingX: '6px', border: '1px solid #37352F', cursor: 'pointer', fontFamily: 'Josefin Sans', fontWeight: 700, color:'#37352F' }}
+                              onClick={() => updateBoardColor('#37352F', b)}
+                            >
+                              A</Typography>
+                          </Box>
+                        </Box>
+                      </Popover>
 
                       <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
                         <ToggleFocusInput
