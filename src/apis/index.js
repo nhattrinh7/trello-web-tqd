@@ -110,12 +110,15 @@ export const updateCardDetailsAPI = async (cardId, updateData) => {
 
 export const inviteUserToBoardAPI = async (data) => {
   const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/invitations/board`, data)
-  toast.success('User invited to board successfully!')
   return response.data
 }
 
-// Lấy về thông tin của các user thuộc Board
-// export const getUsersInfoAPI = async (boardId) => {
-//   const response = await authorizedAxiosInstance.get(`${API_ROOT}/v1/boards/${boardId}`)
-//   return response.data
-// }
+export const fetchMemberInvitationsAPI = async (data) => {
+  const response = await authorizedAxiosInstance.post(`${API_ROOT}/v1/invitations/boards`, data)
+  return response.data
+}
+
+export const updateAllowInvitationAPI = async ({ status, invitationId }) => {
+  const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/invitations/boards/${invitationId}`, { status })
+  return response.data
+}

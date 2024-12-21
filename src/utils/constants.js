@@ -10,3 +10,12 @@ export const CARD_MEMBER_ACTIONS = {
   ADD: 'ADD',
   REMOVE: 'REMOVE'
 }
+
+export const INVITATION_TYPES = {
+  BOARD_INVITATION: 'BOARD_INVITATION'
+}
+
+export const BOARD_ALLOW_STATUS = {
+  ALLOW: 'ALLOW',
+  NOTALLOW: 'NOTALLOW'
+}

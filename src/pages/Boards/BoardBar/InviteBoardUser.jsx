@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
@@ -9,11 +9,28 @@ import TextField from '@mui/material/TextField'
 import { useForm } from 'react-hook-form'
 import { EMAIL_RULE, FIELD_REQUIRED_MESSAGE, EMAIL_RULE_MESSAGE } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
-import { inviteUserToBoardAPI } from '~/apis'
+import { inviteUserToBoardAPI, fetchMemberInvitationsAPI } from '~/apis'
 import { socketIoInstance } from '~/socketClient'
+import { toast } from 'react-toastify'
+import { INVITATION_TYPES, BOARD_ALLOW_STATUS } from '~/utils/constants'
+import Divider from '@mui/material/Divider'
+import { updateAllowInvitationAPI } from '~/apis'
+import moment from 'moment'
+import { useSelector } from 'react-redux'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 
 
 function InviteBoardUser({ boardId }) {
+  const board = useSelector(selectCurrentActiveBoard)
+  const thisUser = useSelector(selectCurrentUser)
+
+  let isOwner
+  if (board.ownerIds.includes(thisUser._id)) {
+    isOwner = true
+  } else isOwner = false
+
+  // const allUserExceptThisOne = board.ownerIds.filter(user => user._id !== thisUser._id)
 
   const [anchorPopoverElement, setAnchorPopoverElement] = useState(null)
   const isOpenPopover = Boolean(anchorPopoverElement)
@@ -23,22 +40,52 @@ function InviteBoardUser({ boardId }) {
     else setAnchorPopoverElement(null)
   }
 
+  const [memberInvitations, setMemberInvitations] = useState(null)
+
   const { register, handleSubmit, setValue, formState: { errors } } = useForm()
+
+  useEffect(() => {
+    const type = INVITATION_TYPES.BOARD_INVITATION
+    fetchMemberInvitationsAPI({ boardId, type })
+      .then(invitations => {
+        // console.log(invitations)
+        setMemberInvitations(invitations)
+      })
+  }, [boardId])
+
+  const [isMemberAlready, setIsMemberAlready] = useState(false)
 
   const submitInviteUserToBoard = (data) => {
     const { inviteeEmail } = data
-    // console.log('inviteeEmail:', inviteeEmail)
     //Gọi API
-    inviteUserToBoardAPI({ inviteeEmail, boardId }).then(invitation => {
-      // Clear thẻ input sử dụng react-hook-form bằng setValue, đồng thời đóng popover lại
-      setValue('inviteeEmail', null)
-      setAnchorPopoverElement(null)
+    inviteUserToBoardAPI({ inviteeEmail, boardId })
+    //, { success: 'User invited to board successfully!' }
+      .then(invitation => {
+        toast.success('User invited to board successfully!')
+        // Clear thẻ input sử dụng react-hook-form bằng setValue, đồng thời đóng popover lại
+        setValue('inviteeEmail', null)
+        setAnchorPopoverElement(null)
 
-      // Mời 1 người dùng vào Board xong thì cũng sẽ gửi/emit sự kiện socket lên server (tính năng real-time)
-      // Bắn thông báo cho thằng được mời, 'FE_USER_INVITED_TO_BOARD' là tên sự kiện, invitation là dữ liệu truyền lên cho BE
-      socketIoInstance.emit('FE_USER_INVITED_TO_BOARD', invitation)
-    })
+        // Mời 1 người dùng vào Board xong thì cũng sẽ gửi/emit sự kiện socket lên server (tính năng real-time)
+        // Bắn thông báo cho thằng được mời, 'FE_USER_INVITED_TO_BOARD' là tên sự kiện, invitation là dữ liệu truyền lên cho BE
+        socketIoInstance.emit('FE_USER_INVITED_TO_BOARD', invitation)
+      })
+      .catch(() => {
+        setIsMemberAlready(true)
+      })
+  }
 
+  // Cập nhật trạng thái của 1 lời mời tham gia Board, xử lí nhân Accept hoặc Reject
+  const updateBoardInvitation = (status, invitationId) => {
+    updateAllowInvitationAPI({ status, invitationId })
+      .then(() => {
+        const type = INVITATION_TYPES.BOARD_INVITATION
+        fetchMemberInvitationsAPI({ boardId, type })
+          .then(invitations => {
+            // console.log(invitations)
+            setMemberInvitations(invitations)
+          })
+      })
   }
 
   return (
@@ -82,7 +129,9 @@ function InviteBoardUser({ boardId }) {
               />
               <FieldErrorAlert errors={errors} fieldName={'inviteeEmail'} />
             </Box>
-
+            {isMemberAlready &&
+              <Typography sx={{ fontSize: '15px', color:'red' }}>This user is a member of this board already!</Typography>
+            }
             <Box sx={{ alignSelf: 'flex-end' }}>
               <Button
                 className="interceptor-loading"
@@ -95,6 +144,60 @@ function InviteBoardUser({ boardId }) {
             </Box>
           </Box>
         </form>
+
+        {isOwner === true &&
+          <Box>
+            {(!memberInvitations || memberInvitations.length === 0) &&
+              <Typography sx={{ minWidth: 200, padding: 1, textAlign: 'center', marginBottom: 1 }}>No invitation need to be allowed</Typography>}
+            <Box sx={{ maxHeighteight: '400px', overflowY: 'auto' }}>
+              {memberInvitations?.map(invitation =>
+                <Box key={invitation._id}
+                  sx={{
+                    width: '320px',
+                    padding: 2
+                  }}
+                >
+                  <Divider sx={{ marginBottom: 1, marginTop: -2 }}/>
+                  <Typography>
+                    <b>{invitation?.inviter?.displayName} </b>
+                    want to invite
+                    <b> {invitation?.invitee?.displayName} </b>
+                    to join the board
+                    <b> {invitation?.board?.title}</b>
+                  </Typography>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'flex-end', marginY: 1 }}>
+                    <Button
+                      className="interceptor-loading"
+                      type="submit"
+                      variant="contained"
+                      color="success"
+                      size="small"
+                      onClick={() => updateBoardInvitation(BOARD_ALLOW_STATUS.ALLOW, invitation._id)}
+                    >
+                      Allow
+                    </Button>
+                    <Button
+                      className="interceptor-loading"
+                      type="submit"
+                      variant="contained"
+                      color="secondary"
+                      size="small"
+                      onClick={() => updateBoardInvitation(BOARD_ALLOW_STATUS.NOTALLOW, invitation._id)}
+                    >
+                      Reject
+                    </Button>
+                  </Box>
+                  {/* Thời gian của thông báo */}
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="span" sx={{ fontSize: '13px' }}>
+                      {moment(invitation.createdAt).format('llll')}
+                    </Typography>
+                  </Box>
+                </Box>
+              )}
+            </Box>
+          </Box>
+        }
       </Popover>
     </Box>
   )

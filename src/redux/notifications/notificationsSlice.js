@@ -4,7 +4,7 @@ import { API_ROOT } from '~/utils/constants'
 
 
 const initialState = {
-  currentNotifications: null
+  currentNotifications: null // là cả 1 mảng notifications chứ ko phải 1 cái nhé
 }
 
 export const fetchInvitationsAPI = createAsyncThunk(
@@ -49,6 +49,7 @@ export const notificationsSlice = createSlice({
     })
     builder.addCase(updateBoardInvitationAPI.fulfilled, (state, action) => {
       const incomingInvitation = action.payload
+
       // Cập nhật lại dữ liệu boardInvitation (bên trong nó sẽ có Status mới sau khi update)
       const getInvitation = state.currentNotifications.find(i => i._id === incomingInvitation._id)
       getInvitation.boardInvitation = incomingInvitation.boardInvitation

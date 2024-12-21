@@ -77,17 +77,13 @@ function Notifications() {
     return () => {
       socketIoInstance.off('BE_USER_INVITED_TO_BOARD', onReceiveNewInvitaion)
     }
-
   }, [dispatch, currentUser._id])
 
 
   // Cập nhật trạng thái của 1 lời mời tham gia Board, xử lí nhân Accept hoặc Reject
   const updateBoardInvitation = (status, invitationId) => {
-    // console.log('status: ', status)
-    // console.log('invitationId: ', invitationId)
     dispatch(updateBoardInvitationAPI({ status, invitationId }))
       .then(res => {
-        // console.log(res)
         // Nhấn Accept phát là điều hướng nó sang cái board mới accept luôn
         if (res.payload.boardInvitation.status === BOARD_INVITATION_STATUS.ACCEPTED) {
           navigate(`/boards/${res.payload.boardInvitation.boardId}`)
@@ -134,7 +130,7 @@ function Notifications() {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <Box><GroupAddIcon fontSize="small" /></Box>
                   <Box><strong>{notification?.inviter.displayName}</strong> had invited you to join the board
-                    <strong>{notification?.board?.title}</strong></Box>
+                    <strong> {notification?.board?.title}</strong></Box>
                 </Box>
 
                 {/* Khi Status của thông báo này là PENDING thì sẽ hiện 2 Button */}

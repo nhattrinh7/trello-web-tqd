@@ -225,7 +225,8 @@ function Column({ column }) {
         {role === 'owner' &&
           <Box sx={{
             height: (theme) => theme.trello.columnFooterHeight,
-            p: 2
+            p: 1
+
           }}>
             <Box>
               {!openNewCardForm
