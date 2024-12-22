@@ -75,7 +75,6 @@ function Boards() {
   // 2 thằng ở dưới dùng chung nên viết gom lại trên đây
   // hàm trong .then nên tự động nhận được res là kết quả trả về của việc gọi API
   const updateStateBoardData = (res) => {
-    console.log(res)
     setBoards(res.boards || [])
     setTotalBoards(res.totalBoards || 0)
   }
@@ -164,7 +163,7 @@ function Boards() {
       [boardId]: null
     }))
   }
-  const openColor = Boolean(colorAnchorEl)
+  // const openColor = Boolean(colorAnchorEl)
   const idColor = open ? 'simple-popover' : undefined
 
   const updateBoardColor = async (newColor, board) => {

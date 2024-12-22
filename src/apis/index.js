@@ -122,3 +122,8 @@ export const updateAllowInvitationAPI = async ({ status, invitationId }) => {
   const response = await authorizedAxiosInstance.put(`${API_ROOT}/v1/invitations/boards/${invitationId}`, { status })
   return response.data
 }
+
+export const removeCardCoverAPI = async (cardId) => {
+  const response = await authorizedAxiosInstance.delete(`${API_ROOT}/v1/cards/${cardId}/cover`)
+  return response.data
+}

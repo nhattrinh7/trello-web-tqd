@@ -6,7 +6,8 @@ import CancelIcon from '@mui/icons-material/Cancel'
 import Grid from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined'
-import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined'
+import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternateOutlined'
+import HideImageOutlinedIcon from '@mui/icons-material/HideImageOutlined'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
@@ -24,7 +25,7 @@ import {
   selectIsShowModalActiveCard
 } from '~/redux/activeCard/activeCardSlice'
 import { selectCurrentActiveBoard, updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
-import { updateCardDetailsAPI, deleteCardAPI } from '~/apis'
+import { updateCardDetailsAPI, deleteCardAPI, removeCardCoverAPI } from '~/apis'
 import { updateCardInBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { selectCurrentUser } from '~/redux/user/userSlice'
 import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
@@ -105,6 +106,24 @@ function ActiveCard() {
       callApiUpdateCard(reqData).finally(() => event.target.value = ''),
       { pending: 'Updating...' }
     )
+  }
+
+  const confirmDeleteCardCover = useConfirm()
+  const onRemoveCardCover = async (cardId) => {
+    confirmDeleteCardCover({
+      title: 'Delete card cover?'
+    })
+      .then(async () => {
+        await removeCardCoverAPI(cardId)
+          .then(() => {
+          // xóa card cover trong DB xong thì update lại giao diện
+            const newCardToUpdate = {
+              ...activeCard,
+              cover: null
+            }
+            dispatch(updateCurrentActiveCard(newCardToUpdate))
+          })
+      })
   }
 
   // Dùng async await ở đây để component con CardActivitySection chờ và nếu thành công thì mới clear thẻ input comment
@@ -270,7 +289,7 @@ function ActiveCard() {
                 <SidebarItem className="active" component="label">
                   <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <ImageOutlinedIcon fontSize="small" />
+                      <AddPhotoAlternateOutlinedIcon fontSize="small" />
                       <span>Cover</span>
                     </Box>
                   </Box>
@@ -279,12 +298,24 @@ function ActiveCard() {
               }
 
               {role === 'owner' &&
+                <SidebarItem className="active" component="label" onClick={() => onRemoveCardCover(activeCard._id)}>
+                  <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <HideImageOutlinedIcon fontSize="small" />
+                      <span>Cover</span>
+                    </Box>
+                  </Box>
+                  {/* <VisuallyHiddenInput type="file" onChange={onUploadCardCover} /> */}
+                </SidebarItem>
+              }
+
+              {role === 'owner' &&
                 <SidebarItem onClick={handleDeleteCard}>
-                  <DeleteOutlineIcon fontSize="small" variant="outlined"/>Delete
+                  <DeleteOutlineIcon fontSize="small" variant="outlined"/>
+                  Delete
                 </SidebarItem>
               }
             </Stack>
-
           </Grid>
         </Grid>
       </Box>
