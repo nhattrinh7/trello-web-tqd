@@ -53,7 +53,6 @@ function InviteBoardUser({ boardId }) {
       })
   }, [boardId])
 
-  const [isMemberAlready, setIsMemberAlready] = useState(false)
 
   const submitInviteUserToBoard = (data) => {
     const { inviteeEmail } = data
@@ -71,7 +70,6 @@ function InviteBoardUser({ boardId }) {
         socketIoInstance.emit('FE_USER_INVITED_TO_BOARD', invitation)
       })
       .catch(() => {
-        setIsMemberAlready(true)
       })
   }
 
@@ -129,9 +127,7 @@ function InviteBoardUser({ boardId }) {
               />
               <FieldErrorAlert errors={errors} fieldName={'inviteeEmail'} />
             </Box>
-            {isMemberAlready &&
-              <Typography sx={{ fontSize: '15px', color:'red' }}>This user is a member of this board already!</Typography>
-            }
+
             <Box sx={{ alignSelf: 'flex-end' }}>
               <Button
                 className="interceptor-loading"

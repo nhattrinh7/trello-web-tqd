@@ -10,9 +10,10 @@ import AddPhotoAlternateOutlinedIcon from '@mui/icons-material/AddPhotoAlternate
 import HideImageOutlinedIcon from '@mui/icons-material/HideImageOutlined'
 import SubjectRoundedIcon from '@mui/icons-material/SubjectRounded'
 import DvrOutlinedIcon from '@mui/icons-material/DvrOutlined'
+import AttachFileIcon from '@mui/icons-material/AttachFile'
 import ToggleFocusInput from '~/components/Form/ToggleFocusInput'
 import VisuallyHiddenInput from '~/components/Form/VisuallyHiddenInput'
-import { singleFileValidator } from '~/utils/validators'
+import { singleFileValidator, multipleAttachmentValidator } from '~/utils/validators'
 import { toast } from 'react-toastify'
 import CardUserGroup from './CardUserGroup'
 import CardDescriptionMdEditor from './CardDescriptionMdEditor'
@@ -35,6 +36,12 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
 import { useConfirm } from 'material-ui-confirm'
 import { styled } from '@mui/material/styles'
 import { cloneDeep } from 'lodash'
+import { Worker, Viewer } from '@react-pdf-viewer/core'
+import { Button } from '@mui/material'
+import { useState } from 'react'
+import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
+import '@react-pdf-viewer/core/lib/styles/index.css'
+import '@react-pdf-viewer/default-layout/lib/styles/index.css'
 
 
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -71,7 +78,6 @@ function ActiveCard() {
   const role = board.ownerIds.includes(currentUser._id) ? 'owner' : 'member'
 
   const handleCloseModal = () => {
-    // setIsOpen(false)
     dispatch(clearAndHideCurrentActiveCard())
   }
 
@@ -105,6 +111,23 @@ function ActiveCard() {
     toast.promise( // upload file hơi lâu nên dùng Promise để hiển thị loading thôi mà
       callApiUpdateCard(reqData).finally(() => event.target.value = ''),
       { pending: 'Updating...' }
+    )
+  }
+
+  const handleUploadAttachments = (event) => {
+    const files = event.target?.files
+    const error = multipleAttachmentValidator(files)
+    if (error) {
+      toast.error(error)
+      return
+    }
+    let reqData = new FormData()
+    for (let i = 0; i < files.length; i++) {
+      reqData.append('attachments', files[i])
+    }
+    toast.promise(
+      callApiUpdateCard(reqData).finally(() => event.target.value = ''),
+      { pending: 'Uploading attachments...' }
     )
   }
 
@@ -157,6 +180,25 @@ function ActiveCard() {
           .then(res => {toast.success(res?.deleteResult)})
       })
       .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
+  }
+
+  const [selectedPdfUrls, setSelectedPdfUrls] = useState([])
+  const [openAttachment, setOpenAttachment] = useState(false)
+
+  const handleAttachmentClick = (url) => {
+    setSelectedPdfUrls((prevUrls) => [...prevUrls, url])
+    setOpenAttachment(true)
+  }
+
+  const handleCloseAttachment = () => {
+    setSelectedPdfUrls([])
+    setOpenAttachment(false)
+  }
+
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+
+  const handleDeleteAttachment = (url) => {
+    console.log(url)
   }
 
   return (
@@ -234,6 +276,60 @@ function ActiveCard() {
               />
             </Box>
 
+            {/* Hiển thị các attachments của thẻ */}
+            <Box sx={{ mb: 3, color: 'black' }}>
+              <Typography variant='h6' sx={{ m: 0 }}>
+                <AttachFileIcon fontSize='small' sx={{ mr: 1 }} />
+                Attachments
+              </Typography>
+              {activeCard?.attachments?.map(attachment =>
+                <Box
+                  onClick={() => handleAttachmentClick(attachment.url)}
+                  key={attachment.url}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    margin: 1
+                  }}
+                >
+                  <Box sx={{ display: 'inline', fontWeight: 500 }}>{attachment.name}</Box>
+                  {role === 'owner' &&
+                    <Button onClick={() => handleDeleteAttachment(attachment.url)} sx={{ color: 'white', backgroundColor: 'primary.main' }}>Delete</Button>
+                  }
+
+                  <Modal
+                    open={openAttachment}
+                    onClose={handleCloseAttachment}
+                    closeAfterTransition
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: '60vw',
+                        height: '100%',
+                        bgcolor: 'black',
+                        boxShadow: 24,
+                        p: 4,
+                        overflow: 'auto'
+                      }}
+                    >
+                      {selectedPdfUrls.map((url, index) => (
+                        <Box key={index} sx={{ mb: 3 }}>
+                          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
+                            <Viewer fileUrl={url} plugins={[defaultLayoutPluginInstance]}/>
+                          </Worker>
+                        </Box>
+                      ))}
+                    </Box>
+                  </Modal>
+                </Box>
+              )}
+            </Box>
+
             <Box sx={{ mb: 3 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
                 <DvrOutlinedIcon />
@@ -305,7 +401,18 @@ function ActiveCard() {
                       <span>Cover</span>
                     </Box>
                   </Box>
-                  {/* <VisuallyHiddenInput type="file" onChange={onUploadCardCover} /> */}
+                </SidebarItem>
+              }
+
+              {role === 'owner' &&
+                <SidebarItem className="active" component="label">
+                  <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <AttachFileIcon fontSize="small" />
+                      <span>Attach</span>
+                    </Box>
+                  </Box>
+                  <VisuallyHiddenInput type="file" multiple onChange={handleUploadAttachments} />
                 </SidebarItem>
               }
 

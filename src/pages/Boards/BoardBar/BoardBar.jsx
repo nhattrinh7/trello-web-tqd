@@ -45,7 +45,7 @@ function BoardBar({ board }) {
             sx={MENU_STYLES}
             icon={<DashboardIcon />}
             label={board?.title}
-            clickable
+            clickable 
           />
         </Tooltip>
         <Chip
