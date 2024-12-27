@@ -66,9 +66,6 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 
 
 function ActiveCard() {
-  // Không dùng state để đóng mở Modal nữa vì ta sẽ check bằng isShowModalActiveCard bên redux
-  // const [isOpen, setIsOpen] = useState(true)
-  // const handleOpenModal = () => setIsOpen(true)
 
   const dispatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
@@ -182,23 +179,29 @@ function ActiveCard() {
       .catch(() => { /* catch ở đây chả cần làm gì, có function rỗng trong catch để nó ko bắn ra lỗi 'Uncaught (in promise) */ })
   }
 
-  const [selectedPdfUrls, setSelectedPdfUrls] = useState([])
-  const [openAttachment, setOpenAttachment] = useState(false)
 
-  const handleAttachmentClick = (url) => {
-    setSelectedPdfUrls((prevUrls) => [...prevUrls, url])
+  // Xử lí attachment ở đây
+  const [selectedAttachment, setSelectedAttachment] = useState({})
+  const [openAttachment, setOpenAttachment] = useState(false)
+  const defaultLayoutPluginInstance = defaultLayoutPlugin()
+
+  const handleAttachmentClick = attachment => {
+    setSelectedAttachment(attachment)
     setOpenAttachment(true)
   }
 
   const handleCloseAttachment = () => {
-    setSelectedPdfUrls([])
+    setSelectedAttachment(null)
     setOpenAttachment(false)
   }
 
-  const defaultLayoutPluginInstance = defaultLayoutPlugin()
-
+  const confirmDeleteAttachment = useConfirm()
   const handleDeleteAttachment = (url) => {
-    console.log(url)
+    confirmDeleteAttachment({
+      title: 'Sure to delete this attachment?'
+    }).then(() => {
+      callApiUpdateCard({ attachmentUrl: url })
+    }).catch(() => {})
   }
 
   return (
@@ -284,7 +287,7 @@ function ActiveCard() {
               </Typography>
               {activeCard?.attachments?.map(attachment =>
                 <Box
-                  onClick={() => handleAttachmentClick(attachment.url)}
+                  onClick={() => handleAttachmentClick(attachment)}
                   key={attachment.url}
                   sx={{
                     display: 'flex',
@@ -294,12 +297,23 @@ function ActiveCard() {
                 >
                   <Box sx={{ display: 'inline', fontWeight: 500 }}>{attachment.name}</Box>
                   {role === 'owner' &&
-                    <Button onClick={() => handleDeleteAttachment(attachment.url)} sx={{ color: 'white', backgroundColor: 'primary.main' }}>Delete</Button>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleDeleteAttachment(attachment.url)
+                      }}
+                      sx={{ color: 'white', backgroundColor: 'primary.main' }}
+                    >
+                      Delete
+                    </Button>
                   }
 
                   <Modal
                     open={openAttachment}
-                    onClose={handleCloseAttachment}
+                    onClose={(e) => {
+                      e.stopPropagation()
+                      handleCloseAttachment()
+                    }}
                     closeAfterTransition
                     sx={{
                       display: 'flex',
@@ -317,13 +331,27 @@ function ActiveCard() {
                         overflow: 'auto'
                       }}
                     >
-                      {selectedPdfUrls.map((url, index) => (
-                        <Box key={index} sx={{ mb: 3 }}>
+                      {selectedAttachment?.mimetype === 'application/pdf' ? (
+                        <Box key={selectedAttachment.url} sx={{ mb: 3 }}>
                           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                            <Viewer fileUrl={url} plugins={[defaultLayoutPluginInstance]}/>
+                            <Viewer fileUrl={selectedAttachment.url} plugins={[defaultLayoutPluginInstance]} />
                           </Worker>
                         </Box>
-                      ))}
+                      ) : (
+                        /* Hiển thị ảnh */
+                        <Box
+                          component="img"
+                          src={selectedAttachment?.url}
+                          alt="attachment"
+                          sx={{
+                            maxWidth: '100%',
+                            maxHeight: '60vh',
+                            objectFit: 'contain',
+                            display: 'flex',
+                            justifyContent: 'center'
+                          }}
+                        />
+                      )}
                     </Box>
                   </Modal>
                 </Box>
