@@ -28,7 +28,6 @@ authorizedAxiosInstance.interceptors.request.use((config) => {
 
   return config
 }, function (error) {
-
   return Promise.reject(error)
 })
 
@@ -85,7 +84,6 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
   if (error.response.status !== 410) {
     toast.error(errorMessage)
   }
-
 
   return Promise.reject(error)
 })

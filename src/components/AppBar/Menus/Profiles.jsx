@@ -15,6 +15,7 @@ import { selectCurrentUser, logoutUserAPI } from '~/redux/user/userSlice'
 import { useConfirm } from 'material-ui-confirm'
 import { Link } from 'react-router-dom'
 
+
 function Profiles() {
   const [anchorEl, setAnchorEl] = React.useState(null)
   const open = Boolean(anchorEl)
@@ -36,7 +37,7 @@ function Profiles() {
       cancellationText: 'Cancel'
     }).then(() => {
       // Gọi API đăng xuất người dùng
-      dispatch(logoutUserAPI())
+      dispatch(logoutUserAPI({ showSuccessMessage: true }))
     }).catch(() => {}) // để ko bị lỗi console, đã giải thích trước đó rồi hồi làm delete Column
   }
 

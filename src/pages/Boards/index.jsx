@@ -8,8 +8,6 @@ import Grid from '@mui/material/Grid2'
 import Stack from '@mui/material/Stack'
 import Divider from '@mui/material/Divider'
 import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard'
-import ListAltIcon from '@mui/icons-material/ListAlt'
-import HomeIcon from '@mui/icons-material/Home'
 import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -29,6 +27,8 @@ import { useDispatch } from 'react-redux'
 import { updateCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import EditBoardDescriptionModal from '~/components/Form/EditBoardDescriptionModal'
 import Popover from '@mui/material/Popover'
+import { selectCurrentUser } from '~/redux/user/userSlice'
+import { useSelector } from 'react-redux'
 
 
 import { styled } from '@mui/material/styles'
@@ -57,6 +57,7 @@ function Boards() {
   const [boards, setBoards] = useState(null)
   // Tổng toàn bộ số lượng bản ghi boards có trong Database mà phía BE trả về để FE dùng tính toán phân trang
   const [totalBoards, setTotalBoards] = useState(null)
+  const currentUser = useSelector(selectCurrentUser)
 
   const location = useLocation()
 
@@ -189,14 +190,6 @@ function Boards() {
                 <SpaceDashboardIcon fontSize="small" />
                 Boards
               </SidebarItem>
-              <SidebarItem>
-                <ListAltIcon fontSize="small" />
-                Templates
-              </SidebarItem>
-              <SidebarItem>
-                <HomeIcon fontSize="small" />
-                Home
-              </SidebarItem>
             </Stack>
             <Divider sx={{ my: 1 }} />
             <Stack direction="column" spacing={1}>
@@ -308,35 +301,39 @@ function Boards() {
                             justifyContent: 'space-between'
                           }}>
                           <Box sx={{ marginLeft: '-8px' }}>
-                            <Button
-                              id="basic-button"
-                              aria-controls={open ? 'basic-menu' : undefined}
-                              aria-haspopup="true"
-                              aria-expanded={open ? 'true' : undefined}
-                              onClick={(e) => handleClick(b._id, e)}
-                            >
-                              Manage board
-                            </Button>
-                            <Menu
-                              id="basic-menu"
-                              anchorEl={anchorEl[b._id]}
-                              open={Boolean(anchorEl[b._id])}
-                              onClose={() => handleClose(b._id)}
-                              MenuListProps={{
-                                'aria-labelledby': 'basic-button'
-                              }}
-                            >
-                              <MenuItem >
-                                <EditBoardDescriptionModal
-                                  handleCloseMenu={handleCloseMenu}
-                                  afterCreateNewBoard={afterCreateNewBoard}
-                                  onEditDescription={handleEditDescription}
-                                  board={b}
-                                />
-                              </MenuItem>
-                              <MenuItem onClick={() => handleDeleteBoard(b._id)}>Delete board</MenuItem>
-                              {/* <MenuItem onClick={() => {console.log(b.title)}}>Delete board</MenuItem> */}
-                            </Menu>
+                            {b.ownerIds.includes(currentUser._id) &&
+                              <>
+                                <Button
+                                  id="basic-button"
+                                  aria-controls={open ? 'basic-menu' : undefined}
+                                  aria-haspopup="true"
+                                  aria-expanded={open ? 'true' : undefined}
+                                  onClick={(e) => handleClick(b._id, e)}
+                                >
+                                  Manage board
+                                </Button>
+                                <Menu
+                                  id="basic-menu"
+                                  anchorEl={anchorEl[b._id]}
+                                  open={Boolean(anchorEl[b._id])}
+                                  onClose={() => handleClose(b._id)}
+                                  MenuListProps={{
+                                    'aria-labelledby': 'basic-button'
+                                  }}
+                                >
+                                  <MenuItem >
+                                    <EditBoardDescriptionModal
+                                      handleCloseMenu={handleCloseMenu}
+                                      afterCreateNewBoard={afterCreateNewBoard}
+                                      onEditDescription={handleEditDescription}
+                                      board={b}
+                                    />
+                                  </MenuItem>
+                                  <MenuItem onClick={() => handleDeleteBoard(b._id)}>Delete board</MenuItem>
+                                  {/* <MenuItem onClick={() => {console.log(b.title)}}>Delete board</MenuItem> */}
+                                </Menu>
+                              </>
+                            }
                           </Box>
                           <Button
                             component={Link}

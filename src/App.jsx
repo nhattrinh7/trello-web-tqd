@@ -17,6 +17,7 @@ const ProtectedRoute = ({ user }) => {
   return <Outlet />
 }
 
+// Login vào rồi thì vào thẳng trang BoardList, không được ra trang Homepage
 const ProtectedRouteHomePage2 = ({ user }) => {
   if (user) return <Navigate to='/boards' replace='true'/>
   return <Outlet />

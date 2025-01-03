@@ -15,25 +15,34 @@ function Permission () {
       {currentUser === null &&
         <HomePageAppBar />
       }
-      <Typography variant='h4'>Roles and Permissions in board</Typography>
-      <Box>
+      <Typography variant='h4' sx={{ marginTop: '1em', marginLeft: '20px' }}>Roles and Permissions in board</Typography>
+      <Box sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        margin: '1.5em'
+      }}>
         <Box>
-          <Typography>Default Owner</Typography>
+          <Typography variant='h6'>Default Owner</Typography>
           <Box>
             Default Owner has all permission in a board<br />
-            Only Default Owner can specify people&apos; role
+            Only Default Owner can specify people&apos; role<br />
+            When Default Owner leave board, one user of this board need to be specified as a new Default Owner<br />
+            If you are the only user in board, you can not leave
           </Box>
         </Box>
         <Box>
-          <Typography>Owner</Typography>
+          <Typography variant='h6'>Normal Owner</Typography>
           <Box>
-            Default Owner has all permission in a board except specify others&apos;s role<br />
-            Only Default Owner can specify each other person to
+            Normal Owner has all permission in a board except specify others&apos;s role<br />
           </Box>
         </Box>
         <Box>
-          <Typography>Member</Typography>
-
+          <Typography variant='h6'>Member</Typography>
+          <Box>
+            Member can only view, invite user, leave and comment!<br />
+            Member &apos;s invitation need to be approved by Default Owner or Normal Owner
+          </Box>
         </Box>
       </Box>
     </Box>

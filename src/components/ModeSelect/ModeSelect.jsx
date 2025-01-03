@@ -32,18 +32,18 @@ function ModeSelect({ color, textColor }) {
       onChange={(event) => setMode(event.target.value)}
       >
         <MenuItem value="system">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: textColor }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'textColor' }}>
             <SettingsBrightnessIcon fontSize='small'/>
             System
           </Box>
         </MenuItem>
         <MenuItem value="light">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: textColor }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'textColor' }}>
             <LightModeIcon fontSize='small'/> Light
           </Box>
         </MenuItem>
         <MenuItem value="dark">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: textColor }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 500, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'textColor' }}>
             <DarkModeIcon fontSize='small'/> Dark
           </Box>
         </MenuItem>

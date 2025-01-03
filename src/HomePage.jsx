@@ -14,6 +14,7 @@ import XIcon from '@mui/icons-material/X'
 import YouTubeIcon from '@mui/icons-material/YouTube'
 import SvgIcon from '@mui/material/SvgIcon'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
+import theme from '~/theme'
 
 
 function HomePage () {
@@ -62,12 +63,12 @@ function HomePage () {
           </Grid>
         </Box>
 
-        <Box sx={{ marginTop: '40px', marginLeft: { xs: '5%', sm: '15%', lg: '20%' } }}>
+        <Box sx={{ marginTop: '40px', marginLeft: { xs: '5%', sm: '15%', lg: '20%' }, color: theme.palette.mode === 'dark' ? 'white' : '#091e42' }}>
           <Box>
-            <Typography sx={{ fontFamily: 'Josefin Sans', color: '#091e42', fontSize: '35px' }}>Đỉnh cao năng xuất</Typography>
+            <Typography sx={{ fontFamily: 'Josefin Sans', fontSize: '35px', color: (theme) => theme.palette.mode === 'dark' ? 'white' : '#091e42' }}>Đỉnh cao năng xuất</Typography>
             <Typography sx={{
               fontFamily: 'Josefin Sans',
-              color: '#091e42',
+              color: (theme) => theme.palette.mode === 'dark' ? 'white' : '#091e42',
               maxWidth: '600px',
               fontSize: '18px'
             }}>
@@ -83,7 +84,7 @@ function HomePage () {
             marginTop: '35px',
             gap: 3
           }}
-          style={{ background: 'linear-gradient(180deg, rgb(212, 246, 255), rgb(198, 231, 255)' }}
+          style={{ background: (theme) => theme.palette.mode === 'dark' ? 'grey' : 'linear-gradient(180deg, rgb(212, 246, 255), rgb(198, 231, 255)' }}
         >
           <Box sx={{
             marginTop: '40px',
@@ -123,7 +124,6 @@ function HomePage () {
         {/* Thống kê */}
         <Box
           sx={{
-            // borderRadius: '5px',
             marginY: '50px',
             boxShadow: '3px 3px 0px 0px rgba(0, 0, 0, 0.4)',
             marginX: { xs: '5%', sm: '10%', md: '12%', lg: '20%' },
@@ -140,12 +140,13 @@ function HomePage () {
             flexDirection: 'column',
             justifyContent: { md: 'space-between' },
             wordSpacing: '4px'
+            // backgroundColor: (theme) => theme.palette.mode === 'dark' ? 'grey' : 'white',
           }}>
             <Typography
               fontSize='24px'
               lineHeight='36px'
               sx={{
-                color: '#373737',
+                color: (theme) => theme.palette.mode === 'dark' ? 'white' : '#373737',
                 marginBottom: { xs: '15px' }
               }}
             >
@@ -154,8 +155,8 @@ function HomePage () {
             </Typography>
             <Box>
               <Divider sx={{ backgroundColor: 'black', width: '150px', marginBottom: { xs: '15px' } }}/>
-              <Typography sx={{ color: '#373737', fontFamily: 'Josefin Sans' }}>Joey Rosenberg</Typography>
-              <Typography sx={{ color: '#373737', fontFamily: 'Josefin Sans', marginBottom: { xs: '5px', md: '10px' } }}>Giám đốc lãnh đạo toàn cầu tại Women Who Code</Typography>
+              <Typography sx={{ fontFamily: 'Josefin Sans', color: (theme) => theme.palette.mode === 'dark' ? 'white' : '#373737' }}>Joey Rosenberg</Typography>
+              <Typography sx={{ fontFamily: 'Josefin Sans', color: (theme) => theme.palette.mode === 'dark' ? 'white' : '#373737', marginBottom: { xs: '5px', md: '10px' } }}>Giám đốc lãnh đạo toàn cầu tại Women Who Code</Typography>
               <Box
                 component='img'
                 src='https://cdn.shopify.com/s/files/1/1649/1031/files/FullLogo-Black_1.png?height=628&pad_color=fff&v=1658931443&width=1200'
@@ -177,12 +178,16 @@ function HomePage () {
               }}
             >
               <Typography
-                // variant='h3'
                 fontSize='33px'
                 sx={{
                   color: 'white',
                   fontFamily: 'Barlow',
-                  fontWeight: 600
+                  fontWeight: 600,
+                  display: '-webkit-box',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  WebkitBoxOrient: 'vertical', // Định hướng dọc
+                  WebkitLineClamp: 6
                 }}
               >
                 75% các tổ chức báo cáo rằng Trello mang lại giá trị cho doanh nghiệp của họ trong vòng 30 ngày

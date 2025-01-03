@@ -1,6 +1,5 @@
-// import { useState } from 'react'
+import ModeSelect from '../ModeSelect/ModeSelect'
 import Box from '@mui/material/Box'
-import ModeSelect from '~/components/ModeSelect/ModeSelect'
 import AppsIcon from '@mui/icons-material/Apps'
 import { ReactComponent as TrelloIcon } from '~/assets/trello.svg'
 import SvgIcon from '@mui/material/SvgIcon'
@@ -22,7 +21,7 @@ function HomePageAppBar() {
         justifyContent: 'space-between',
         gap: 2,
         overflowX: 'auto',
-        bgcolor: (theme) => (theme.palette.mode === 'dark' ? '#2c3e50' : 'white'),
+        bgcolor: (theme) => (theme.palette.mode === 'dark' ? 'white' : 'white'),
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
       <Box sx={{ display: 'flex', alignItems: 'bottom', gap: 2 }}>
@@ -57,7 +56,7 @@ function HomePageAppBar() {
         </Link>
 
         {/* Chỉnh dark - light mode */}
-        <ModeSelect color={'purple'} textColor={'purple'}/>
+        {/* <ModeSelect color={'purple'} textColor={'purple'}/> */}
       </Box>
 
     </Box>

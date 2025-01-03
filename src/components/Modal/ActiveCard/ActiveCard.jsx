@@ -42,6 +42,7 @@ import { useState } from 'react'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
+import theme from '~/theme'
 
 
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -281,7 +282,7 @@ function ActiveCard() {
 
             {/* Hiển thị các attachments của thẻ */}
             <Box sx={{ mb: 3, color: 'black' }}>
-              <Typography variant='h6' sx={{ m: 0 }}>
+              <Typography variant='h6' sx={{ m: 0, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'black' }}>
                 <AttachFileIcon fontSize='small' sx={{ mr: 1 }} />
                 Attachments
               </Typography>
@@ -295,14 +296,14 @@ function ActiveCard() {
                     margin: 1
                   }}
                 >
-                  <Box sx={{ display: 'inline', fontWeight: 500 }}>{attachment.name}</Box>
+                  <Box sx={{ display: 'inline', fontWeight: 500, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'black' }}>{attachment.name}</Box>
                   {role === 'owner' &&
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
                         handleDeleteAttachment(attachment.url)
                       }}
-                      sx={{ color: 'white', backgroundColor: 'primary.main' }}
+                      sx={{ color: (theme) => theme.palette.mode === 'dark' ? 'black' : 'white', backgroundColor: 'primary.main' }}
                     >
                       Delete
                     </Button>
