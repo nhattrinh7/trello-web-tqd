@@ -33,6 +33,7 @@ import { CARD_MEMBER_ACTIONS } from '~/utils/constants'
 import ExitToAppIcon from '@mui/icons-material/ExitToApp'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
+import DownloadIcon from '@mui/icons-material/Download'
 import { useConfirm } from 'material-ui-confirm'
 import { styled } from '@mui/material/styles'
 import { cloneDeep } from 'lodash'
@@ -42,7 +43,7 @@ import { useState } from 'react'
 import { defaultLayoutPlugin } from '@react-pdf-viewer/default-layout'
 import '@react-pdf-viewer/core/lib/styles/index.css'
 import '@react-pdf-viewer/default-layout/lib/styles/index.css'
-import theme from '~/theme'
+import { saveAs } from 'file-saver'
 
 
 const SidebarItem = styled(Box)(({ theme }) => ({
@@ -205,6 +206,10 @@ function ActiveCard() {
     }).catch(() => {})
   }
 
+  const handleDownload = (url, filename) => {
+    saveAs(url, filename)
+  }
+
   return (
     <Modal
       disableScrollLock
@@ -297,17 +302,34 @@ function ActiveCard() {
                   }}
                 >
                   <Box sx={{ display: 'inline', fontWeight: 500, color: (theme) => theme.palette.mode === 'dark' ? 'white' : 'black' }}>{attachment.name}</Box>
-                  {role === 'owner' &&
+                  <Box sx={{ display: 'flex', gap: 1 }}>
                     <Button
                       onClick={(e) => {
                         e.stopPropagation()
-                        handleDeleteAttachment(attachment.url)
+                        handleDownload(attachment.url, attachment.name)
                       }}
-                      sx={{ color: (theme) => theme.palette.mode === 'dark' ? 'black' : 'white', backgroundColor: 'primary.main' }}
+                      sx={{
+                        color: (theme) => (theme.palette.mode === 'dark' ? 'black' : 'white'),
+                        backgroundColor: 'primary.main',
+                        textDecoration: 'none', // Xóa gạch chân của thẻ <a>
+                        display: 'flex',
+                        alignItems: 'center'
+                      }}
                     >
-                      Delete
+                      <DownloadIcon />
                     </Button>
-                  }
+                    {role === 'owner' &&
+                      <Button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteAttachment(attachment.url)
+                        }}
+                        sx={{ color: (theme) => theme.palette.mode === 'dark' ? 'black' : 'white', backgroundColor: 'primary.main' }}
+                      >
+                        Delete
+                      </Button>
+                    }
+                  </Box>
 
                   <Modal
                     open={openAttachment}
@@ -332,26 +354,44 @@ function ActiveCard() {
                         overflow: 'auto'
                       }}
                     >
-                      {selectedAttachment?.mimetype === 'application/pdf' ? (
+                      {selectedAttachment?.mimetype === 'application/pdf' && (
                         <Box key={selectedAttachment.url} sx={{ mb: 3 }}>
                           <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
                             <Viewer fileUrl={selectedAttachment.url} plugins={[defaultLayoutPluginInstance]} />
                           </Worker>
                         </Box>
-                      ) : (
-                        /* Hiển thị ảnh */
+                      )}
+                      {selectedAttachment?.mimetype?.startsWith('image/') && (
                         <Box
-                          component="img"
-                          src={selectedAttachment?.url}
-                          alt="attachment"
                           sx={{
-                            maxWidth: '100%',
-                            maxHeight: '60vh',
-                            objectFit: 'contain',
                             display: 'flex',
-                            justifyContent: 'center'
+                            justifyContent: 'center', // Căn ngang
+                            alignItems: 'center' // Căn dọc
+                            // height: '100vh', // Điều chỉnh chiều cao container theo nhu cầu
                           }}
-                        />
+                        >
+                          <Box
+                            component="img"
+                            src={selectedAttachment?.url}
+                            alt="attachment"
+                            sx={{
+                              maxWidth: '100%',
+                              maxHeight: '60vh',
+                              objectFit: 'contain'
+                            }}
+                          />
+                        </Box>
+                      )}
+                      {selectedAttachment?.mimetype === 'application/msword' ||
+                      selectedAttachment?.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                      && (
+                        <Box key={selectedAttachment.url} sx={{ mb: 3, display: 'flex',
+                          justifyContent: 'center' }}>
+                          <Typography style={{ color: 'white' }}>
+                            Unsupported file type Word, please download to view<br/>
+                            Định dạng file Word chưa được hỗ trợ xem trực tiếp, vui lòng tải xuống để xem
+                          </Typography>
+                        </Box>
                       )}
                     </Box>
                   </Modal>

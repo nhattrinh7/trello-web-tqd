@@ -30,7 +30,9 @@ export const singleFileValidator = (file) => {
 export const maxFileSize = 20 * 1024 * 1024 // byte = 20 MB
 export const allowedFileTypes = [
   'image/jpg', 'image/jpeg', 'image/png',
-  'application/pdf'
+  'application/pdf',
+  'application/msword', // for .doc files
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // for .docx files
 ]
 
 export const multipleAttachmentValidator = (files) => {
@@ -43,7 +45,7 @@ export const multipleAttachmentValidator = (files) => {
       return `File ${file.name} exceeds the maximum size of 20MB.`
     }
     if (!allowedFileTypes.includes(file.type)) {
-      return `File ${file.name} is not an allowed file type. Only accept jpg, jpeg, png, doc, docx, pdf, zip, and rar.`
+      return `File ${file.name} is not an allowed file type.`
     }
   }
   return null

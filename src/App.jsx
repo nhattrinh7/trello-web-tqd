@@ -32,6 +32,7 @@ function App() {
         <Navigate to='/boards' replace={true} /> // replace = true sẽ BỎ QUA / khi nhấn quay lại
       }/> */}
 
+      {/* Homepage */}
       <Route element={<ProtectedRouteHomePage2 user={currentUser}/>}>
         <Route path='/' element={<HomePage />} />
       </Route>
@@ -46,9 +47,6 @@ function App() {
         <Route path='/settings/account' element={<Settings />} />
         <Route path='/settings/security' element={<Settings />} />
       </Route>
-
-      {/* Homepage */}
-      {/* <Route path='/' element={<HomePage />} /> */}
 
       <Route path='/permission' element={<Permission />}/>
 
