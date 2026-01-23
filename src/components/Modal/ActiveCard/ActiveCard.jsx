@@ -115,6 +115,7 @@ function ActiveCard() {
 
   const handleUploadAttachments = (event) => {
     const files = event.target?.files
+    // console.log(files)
     const error = multipleAttachmentValidator(files)
     if (error) {
       toast.error(error)
@@ -383,13 +384,18 @@ function ActiveCard() {
                         </Box>
                       )}
                       {selectedAttachment?.mimetype === 'application/msword' ||
-                      selectedAttachment?.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                      selectedAttachment?.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' ||
+                      selectedAttachment?.mimetype === 'application/zip' || // for .zip files
+                      selectedAttachment?.mimetype === 'application/x-zip-compressed' ||
+                      selectedAttachment?.mimetype === 'application/vnd.ms-powerpoint' ||
+                      selectedAttachment?.mimetype === 'application/vnd.openxmlformats-officedocument.presentationml.presentation' ||
+                      selectedAttachment?.mimetype === 'text/plain'
                       && (
                         <Box key={selectedAttachment.url} sx={{ mb: 3, display: 'flex',
                           justifyContent: 'center' }}>
                           <Typography style={{ color: 'white' }}>
-                            Unsupported file type Word, please download to view<br/>
-                            Định dạng file Word chưa được hỗ trợ xem trực tiếp, vui lòng tải xuống để xem
+                            Unsupported file type, please download to view<br/>
+                            Định dạng file chưa được hỗ trợ xem trực tiếp, vui lòng tải xuống để xem
                           </Typography>
                         </Box>
                       )}

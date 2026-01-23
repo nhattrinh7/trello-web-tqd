@@ -1,5 +1,4 @@
 // redux: state management tools
-
 import { configureStore } from '@reduxjs/toolkit'
 import { activeBoardReducer } from './activeBoard/activeBoardSlice'
 import { userReducer } from './user/userSlice'
@@ -15,6 +14,7 @@ const rootPersistConfig = {
   key: 'root', // key của persist do chúng ta chỉ định, cứ để mặc định là root
   storage: storage, // Biến storage ở trên - lưu và localstorage
   whitelist: ['user'] // định nghĩa các slide dữ liệu ĐƯỢC PHÉP duy trì qua mỗi lần f5 trình duyệt
+  // whitelist: ['user', 'activeBoard'] // định nghĩa các slide dữ liệu ĐƯỢC PHÉP duy trì qua mỗi lần f5 trình duyệt
   // blacklist: ['user'] // định nghĩa các slide dữ liệu KHÔNG ĐƯỢC PHÉP duy trì qua mỗi lần f5 trình duyệt
 }
 

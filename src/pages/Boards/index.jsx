@@ -53,7 +53,7 @@ const SidebarItem = styled(Box)(({ theme }) => ({
 
 function Boards() {
   const dispatch = useDispatch()
-  // MẢNG các bản ghi boards hiển thị tối đa trên 1 page tùy dự án (thường sẽ là 12 cái)
+  // MẢNG data các bản ghi boards hiển thị tối đa trên 1 page tùy dự án (thường sẽ là 12 cái)
   const [boards, setBoards] = useState(null)
   // Tổng toàn bộ số lượng bản ghi boards có trong Database mà phía BE trả về để FE dùng tính toán phân trang
   const [totalBoards, setTotalBoards] = useState(null)
@@ -77,6 +77,7 @@ function Boards() {
   // hàm trong .then nên tự động nhận được res là kết quả trả về của việc gọi API
   const updateStateBoardData = (res) => {
     setBoards(res.boards || [])
+    console.log('res', res)
     setTotalBoards(res.totalBoards || 0)
   }
 
@@ -375,6 +376,7 @@ function Boards() {
                     <PaginationItem
                       component={Link}
                       to={`/boards${item.page === DEFAULT_PAGE ? '' : `?page=${item.page}`}`}
+                      // to={`/boards?page=${item.page}`}
                       {...item}
                     />
                   )}

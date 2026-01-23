@@ -57,7 +57,7 @@ authorizedAxiosInstance.interceptors.response.use((response) => {
           // Hiện tại ở đây không cần làm gì vì đồng thời accessToken đã nằm trong httpOnly cookie (xử lý từ phía BE) sau khi api refreshToken được gọi thành công.
           return data?.accessToken // return để làm gì nhỉ
         })
-        .catch((_error) => {
+        .catch((_error) => { // nếu refreshToken bị lỗi hoặc hết hạn thì phía BE khi verify sẽ phát hiện ra, về tới đây sẽ chạy vào catch này
           axiosReduxStore.dispatch(logoutUserAPI(false)) // sang kia nó set state.currentUser = null
           return Promise.reject(_error)
         })

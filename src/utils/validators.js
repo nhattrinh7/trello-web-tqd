@@ -32,14 +32,20 @@ export const allowedFileTypes = [
   'image/jpg', 'image/jpeg', 'image/png',
   'application/pdf',
   'application/msword', // for .doc files
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document' // for .docx files
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // for .docx files
+  'application/zip', // for .zip files
+  'application/x-zip-compressed', // for .zip files
+  'application/vnd.ms-powerpoint',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'text/plain'
+
 ]
 
 export const multipleAttachmentValidator = (files) => {
   for (let i = 0; i < files.length; i++) {
     const file = files[i]
     if (!file || !file.name || !file.size || !file.type) {
-      return 'File cannot be blank.'
+      return 'File cannot be blank. error in validators.js in FE'
     }
     if (file.size > maxFileSize) {
       return `File ${file.name} exceeds the maximum size of 20MB.`

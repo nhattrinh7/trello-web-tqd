@@ -1,7 +1,3 @@
-/**
- * Author: TrungQuanDev - Một Lập Trình Viên
- * YouTube: https://youtube.com/@trungquandev
- */
 import { useState, useEffect } from 'react'
 import TextField from '@mui/material/TextField'
 import Autocomplete from '@mui/material/Autocomplete'
@@ -84,7 +80,7 @@ function AutoCompleteSearchBoard() {
       // Link chi tiết: https://stackoverflow.com/a/65347275/8324172
       isOptionEqualToValue={(option, value) => option._id === value._id}
 
-      // Loading thì đơn giản rồi nhé
+      // Loading thì đơn giản rồi nhé, là cái useState ở trên
       loading={loading}
 
       // onInputChange sẽ chạy khi gõ nội dung vào thẻ input, cần làm debounce để tránh việc bị spam gọi API
