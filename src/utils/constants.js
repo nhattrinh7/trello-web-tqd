@@ -1,6 +1,7 @@
 // chứa hằng số ở đây
 
-export const API_ROOT = 'http://localhost:8017'
+// export const API_ROOT = 'http://localhost:8017'
+export const API_ROOT = 'https://trello-api-web.onrender.com'
 
 // Pagination
 export const DEFAULT_PAGE = 1
