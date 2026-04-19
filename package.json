@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "engines": {
-    "node": ">=20.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "vite",
@@ -56,3 +56,4 @@
     "vite-plugin-svgr": "^3.2.0"
   }
 }
+
