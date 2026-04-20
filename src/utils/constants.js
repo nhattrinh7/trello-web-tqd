@@ -1,11 +1,14 @@
-let apiRoot = ''
+const viteApiRoot = import.meta.env.VITE_API_ROOT
+const buildMode = import.meta.env.VITE_BUILD_MODE || process.env.BUILD_MODE
 
-if (process.env.BUILD_MODE === 'dev') {
+let apiRoot = 'https://trello-api-web.onrender.com'
+
+if (buildMode === 'dev') {
   apiRoot = 'http://localhost:8017'
 }
 
-if (process.env.BUILD_MODE === 'production') {
-  apiRoot = 'https://trello-api-web.onrender.com'
+if (viteApiRoot) {
+  apiRoot = viteApiRoot
 }
 
 export const API_ROOT = apiRoot
